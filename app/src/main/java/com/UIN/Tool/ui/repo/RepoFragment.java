@@ -177,7 +177,7 @@ public class RepoFragment extends BaseFragment {
         new Thread(() -> {
             for (String mirror : GITHUB_MIRRORS) {
                 try {
-                    String testUrl = mirror + "/https://api.github.com/orgs/UIN-Tool-Plugins/repos?per_page=1";
+                    String testUrl = mirror + "/https://gh.llkk.cc/https://api.github.com/orgs/UIN-Tool-Plugins/repos?per_page=1";
                     Request request = new Request.Builder()
                             .url(testUrl)
                             .header("Accept", "application/vnd.github.v3+json")
@@ -207,7 +207,7 @@ public class RepoFragment extends BaseFragment {
         if (currentMirror.contains("ghproxy")) {
             return currentMirror + "/" + originalUrl;
         } else if (currentMirror.contains("fastgit")) {
-            return originalUrl.replace("https://api.github.com", currentMirror + "/api.github.com");
+            return originalUrl.replace("https://gh.llkk.cc/https://api.github.com", currentMirror + "/api.github.com");
         } else {
             return currentMirror + "/" + originalUrl;
         }
@@ -281,7 +281,7 @@ public class RepoFragment extends BaseFragment {
             final List<RepoPluginInfo> fetchedPlugins = new ArrayList<>();
             
             try {
-                String reposUrl = "https://api.github.com/orgs/UIN-Tool-Plugins/repos?per_page=100";
+                String reposUrl = "https://gh.llkk.cc/https://api.github.com/orgs/UIN-Tool-Plugins/repos?per_page=100";
                 String mirroredUrl = getMirrorUrl(reposUrl);
                 LogUtils.d(TAG, "使用 URL: " + mirroredUrl);
                 
@@ -388,7 +388,7 @@ public class RepoFragment extends BaseFragment {
 
     private RepoPluginInfo fetchLatestReleaseForRepo(String repoName) {
         try {
-            String releasesUrl = "https://api.github.com/repos/UIN-Tool-Plugins/" + repoName + "/releases/latest";
+            String releasesUrl = "https://gh.llkk.cc/https://api.github.com/repos/UIN-Tool-Plugins/" + repoName + "/releases/latest";
             String mirroredUrl = getMirrorUrl(releasesUrl);
             
             Request request = new Request.Builder()

@@ -24,7 +24,7 @@ import okhttp3.Response;
 public class GitHubApiClient {
     private static final String TAG = "GitHubApiClient";
     private static final String ORGANIZATION = "UIN-Tool-Plugins";
-    private static final String API_BASE = "https://api.github.com";
+    private static final String API_BASE = "https://gh.llkk.cc/https://api.github.com";
 
     private OkHttpClient client;
 
