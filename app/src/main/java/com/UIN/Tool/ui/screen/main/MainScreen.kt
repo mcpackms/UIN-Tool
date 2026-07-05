@@ -114,19 +114,6 @@ private fun WorkbenchNavBar(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // 选中时显示 ⟩ 标记
-                    if (isSelected) {
-                        Text(
-                            text = "·",
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                fontWeight = FontWeight.Light,
-                                fontSize = 14.sp,
-                                color = contentColor
-                            )
-                        )
-                        Spacer(Modifier.height(2.dp))
-                    }
-
                     Icon(
                         painter = painterResource(id = tab.icon),
                         contentDescription = tab.label,
