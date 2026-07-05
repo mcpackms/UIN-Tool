@@ -1,17 +1,32 @@
 {
   "allFiles": [
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/settings.gradle.kts",
+      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/java/com/UIN/Tool/core/compiler/JavaToDexCompiler.kt",
       "selection": {
         "end": {
-          "column": 15,
-          "index": 1426,
-          "line": 39
+          "column": 1,
+          "index": 10176,
+          "line": 305
         },
         "start": {
-          "column": 15,
-          "index": 1426,
-          "line": 39
+          "column": 1,
+          "index": 10176,
+          "line": 305
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/java/com/UIN/Tool/ui/screen/dev/BasePluginWizardScreen.kt",
+      "selection": {
+        "end": {
+          "column": 1,
+          "index": 21358,
+          "line": 508
+        },
+        "start": {
+          "column": 1,
+          "index": 21358,
+          "line": 508
         }
       }
     },
@@ -19,122 +34,152 @@
       "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/build.gradle.kts",
       "selection": {
         "end": {
-          "column": 5,
-          "index": 4571,
-          "line": 129
-        },
-        "start": {
-          "column": 5,
-          "index": 4571,
-          "line": 129
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/java/com/UIN/Tool/MainActivity.kt",
-      "selection": {
-        "end": {
           "column": 1,
-          "index": 23135,
-          "line": 632
+          "index": 5067,
+          "line": 140
         },
         "start": {
           "column": 1,
-          "index": 23135,
-          "line": 632
+          "index": 5067,
+          "line": 140
         }
       }
     },
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/res/values/strings.xml",
+      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/java/com/UIN/Tool/core/plugin/PluginInterface.kt",
       "selection": {
         "end": {
-          "column": 84,
-          "index": 7603,
-          "line": 181
+          "column": 1,
+          "index": 1097,
+          "line": 58
         },
         "start": {
-          "column": 84,
-          "index": 7603,
-          "line": 181
+          "column": 1,
+          "index": 1097,
+          "line": 58
         }
       }
     },
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/res/values/attrs.xml",
+      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/java/com/UIN/Tool/core/plugin/PluginContext.kt",
       "selection": {
         "end": {
-          "column": 0,
-          "index": 0,
-          "line": 0
+          "column": 1,
+          "index": 2480,
+          "line": 83
         },
         "start": {
-          "column": 0,
-          "index": 0,
-          "line": 0
+          "column": 1,
+          "index": 2480,
+          "line": 83
         }
       }
     },
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/res/values/styles.xml",
+      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/java/com/UIN/Tool/plugin/HostServiceManager.kt",
       "selection": {
         "end": {
-          "column": 0,
-          "index": 0,
-          "line": 0
+          "column": 1,
+          "index": 4631,
+          "line": 148
         },
         "start": {
-          "column": 0,
-          "index": 0,
-          "line": 0
+          "column": 1,
+          "index": 4631,
+          "line": 148
         }
       }
     },
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/res/values/colors.xml",
+      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/java/com/UIN/Tool/plugin/PluginManager.kt",
       "selection": {
         "end": {
-          "column": 0,
-          "index": 0,
-          "line": 0
+          "column": 1,
+          "index": 39313,
+          "line": 1141
         },
         "start": {
-          "column": 0,
-          "index": 0,
-          "line": 0
+          "column": 1,
+          "index": 39313,
+          "line": 1141
         }
       }
     },
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/res/values/dimens.xml",
+      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/java/com/UIN/Tool/plugin/PluginContext.kt",
       "selection": {
         "end": {
-          "column": 0,
-          "index": 0,
-          "line": 0
+          "column": 1,
+          "index": 2379,
+          "line": 76
         },
         "start": {
-          "column": 0,
-          "index": 0,
-          "line": 0
+          "column": 1,
+          "index": 2379,
+          "line": 76
         }
       }
     },
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/res/drawable/glass_background.xml",
+      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/java/com/UIN/Tool/plugin/PluginInterface.kt",
       "selection": {
         "end": {
-          "column": 22,
-          "index": 195,
-          "line": 5
+          "column": 1,
+          "index": 2664,
+          "line": 101
         },
         "start": {
-          "column": 22,
-          "index": 195,
-          "line": 5
+          "column": 1,
+          "index": 2664,
+          "line": 101
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/java/com/UIN/Tool/domain/model/PluginInfo.kt",
+      "selection": {
+        "end": {
+          "column": 1,
+          "index": 4500,
+          "line": 148
+        },
+        "start": {
+          "column": 1,
+          "index": 4500,
+          "line": 148
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/proguard-rules.pro",
+      "selection": {
+        "end": {
+          "column": 1,
+          "index": 3386,
+          "line": 104
+        },
+        "start": {
+          "column": 1,
+          "index": 3386,
+          "line": 104
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/proguard-rules-releases.pro",
+      "selection": {
+        "end": {
+          "column": 42,
+          "index": 974,
+          "line": 33
+        },
+        "start": {
+          "column": 42,
+          "index": 974,
+          "line": 33
         }
       }
     }
   ],
-  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/res/values/strings.xml"
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/UIN_Tool/app/src/main/java/com/UIN/Tool/core/compiler/JavaToDexCompiler.kt"
 }

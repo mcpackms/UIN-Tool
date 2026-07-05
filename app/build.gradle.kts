@@ -35,9 +35,9 @@ android {
         }
     }
 
+    // ⚠️ 关键配置：这里必须正确设置
     compileOptions {
-        // ✅ 启用核心库脱糖（修复 language-textmate 依赖问题）
-        isCoreLibraryDesugaringEnabled = true
+        isCoreLibraryDesugaringEnabled = true  // 启用脱糖
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -100,9 +100,6 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 
-    // ❌ 移除 org.json
-    // implementation("org.json:json:20240303")
-
     // ==================== Markdown 渲染 ====================
     implementation("org.commonmark:commonmark:0.22.0")
 
@@ -120,18 +117,18 @@ dependencies {
     // ==================== R8/D8 编译器 ====================
     implementation("com.android.tools:r8:8.7.18")
 
-    // ==================== ✅ ECJ 编译器（运行时需要） ====================
+    // ==================== ECJ 编译器（运行时需要） ====================
     implementation(files("libs/ecj.jar"))
     implementation(files("libs/tools.jar"))
 
-    // ==================== ✅ 编译时依赖（不打包到 APK） ====================
+    // ==================== 编译时依赖（不打包到 APK） ====================
     compileOnly(files("libs/android.jar"))
     compileOnly(files("libs/host-sdk.jar"))
 
     // ==================== 解决 ProfileVerifier 依赖问题 ====================
     implementation("com.google.guava:guava:31.1-android")
 
-    // ==================== ✅ 核心库脱糖（修复 language-textmate 问题） ====================
+    // ✅✅✅ 核心库脱糖（必须添加） ✅✅✅
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     // ==================== 测试 ====================
