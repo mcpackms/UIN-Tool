@@ -392,7 +392,7 @@ private fun ManageMenuCard(
         modifier = modifier
             .fillMaxWidth()
             .scale(scale)
-            .clickable(onClick = item.onClick) { isPressed = true },
+            .clickable { item.onClick(); isPressed = true },
         shape = CardShape,
     ) {
         Column(

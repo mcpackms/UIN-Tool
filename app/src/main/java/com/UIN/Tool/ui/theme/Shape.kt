@@ -17,17 +17,32 @@ val WorkbenchShapes = Shapes(
     extraLarge = RoundedCornerShape(8.dp),
 )
 
-// 独立圆角常量（供自定义组件使用）
-val ShapeXs = 2.dp
-val ShapeSm = 4.dp
-val ShapeMd = 6.dp
-val ShapeLg = 8.dp
-val ShapeRound = 999.dp
+object Shape {
+    // 独立圆角常量
+    val Xs = 2.dp
+    val Sm = 4.dp
+    val Md = 6.dp
+    val Lg = 8.dp
+    val Round = 999.dp
 
-// 卡片、输入框、对话框专用
-val CardShape = RoundedCornerShape(ShapeSm)
-val InputShape = RoundedCornerShape(ShapeSm)
-val DialogShape = RoundedCornerShape(ShapeMd)
-val ChipShape = RoundedCornerShape(ShapeSm)
-val ButtonShape = RoundedCornerShape(ShapeSm)
-val NavRailShape = RoundedCornerShape(0.dp)
+    // 卡片、输入框、对话框专用
+    val CardShape = RoundedCornerShape(Sm)
+    val InputShape = RoundedCornerShape(Sm)
+    val DialogShape = RoundedCornerShape(Md)
+    val ChipShape = RoundedCornerShape(Sm)
+    val ButtonShape = RoundedCornerShape(Sm)
+    val NavRailShape = RoundedCornerShape(0.dp)
+}
+
+// Backward-compat aliases
+val ShapeXs: androidx.compose.ui.unit.Dp get() = Shape.Xs
+val ShapeSm: androidx.compose.ui.unit.Dp get() = Shape.Sm
+val ShapeMd: androidx.compose.ui.unit.Dp get() = Shape.Md
+val ShapeLg: androidx.compose.ui.unit.Dp get() = Shape.Lg
+val ShapeRound: androidx.compose.ui.unit.Dp get() = Shape.Round
+val CardShape: androidx.compose.foundation.shape.RoundedCornerShape get() = Shape.CardShape
+val InputShape: androidx.compose.foundation.shape.RoundedCornerShape get() = Shape.InputShape
+val DialogShape: androidx.compose.foundation.shape.RoundedCornerShape get() = Shape.DialogShape
+val ChipShape: androidx.compose.foundation.shape.RoundedCornerShape get() = Shape.ChipShape
+val ButtonShape: androidx.compose.foundation.shape.RoundedCornerShape get() = Shape.ButtonShape
+val NavRailShape: androidx.compose.foundation.shape.RoundedCornerShape get() = Shape.NavRailShape
