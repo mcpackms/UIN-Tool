@@ -130,7 +130,6 @@ object UIComponents {
                 color = if (enabled) MaterialTheme.colorScheme.outline
                         else MaterialTheme.colorScheme.outlineVariant
             ),
-            elevation = ButtonDefaults.outlinedButtonElevation(defaultElevation = 0.dp)
         ) {
             icon?.let {
                 Icon(it, contentDescription = null, modifier = Modifier.size(18.dp))

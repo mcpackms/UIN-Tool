@@ -130,7 +130,7 @@ fun PluginPermissionDetailScreen(
             if (plugin == null) {
                 UIComponents.EmptyState(
                     title = "插件不存在",
-                    subtitle = "未找到对应的插件信息",
+                    description = "未找到对应的插件信息",
                     icon = Icons.Default.Info
                 )
                 return@Scaffold

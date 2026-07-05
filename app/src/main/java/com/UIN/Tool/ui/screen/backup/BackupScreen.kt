@@ -508,7 +508,7 @@ fun BackupScreen() {
         if (backups.isEmpty() && !showProgress) {
             UIComponents.EmptyState(
                 title = "暂无备份文件",
-                subtitle = "点击「创建备份」来备份您的插件",
+                description = "点击「创建备份」来备份您的插件",
                 icon = Icons.Default.Backup
             )
         } else {

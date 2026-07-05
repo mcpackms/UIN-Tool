@@ -25,6 +25,7 @@ import com.UIN.Tool.data.remote.MirrorManager
 import com.UIN.Tool.domain.model.MirrorItem
 import com.UIN.Tool.log.Logger
 import com.UIN.Tool.ui.components.Spacing
+import com.UIN.Tool.ui.theme.Shape
 import com.UIN.Tool.ui.components.UIComponents
 import com.UIN.Tool.utils.Constants
 import kotlinx.coroutines.launch
@@ -251,7 +252,7 @@ fun GitHubMirrorScreen(navController: NavController) {
                 )
             }
 
-            UIComponents.TextButton(
+            UIComponents.GhostButton(
                 text = "重置为默认",
                 icon = Icons.Default.Refresh,
                 onClick = { showResetDialog = true },
@@ -335,7 +336,7 @@ fun GitHubMirrorScreen(navController: NavController) {
                                             if (mirror.isDefault) {
                                                 Surface(
                                                     color = MaterialTheme.colorScheme.primaryContainer,
-                                                    shape = com.UIN.Tool.ui.theme.Shape.ChipShape
+                                                    shape = Shape.ChipShape
                                                 ) {
                                                     Text(
                                                         "默认",
@@ -351,7 +352,7 @@ fun GitHubMirrorScreen(navController: NavController) {
                                                         MaterialTheme.colorScheme.primaryContainer
                                                     else
                                                         MaterialTheme.colorScheme.errorContainer,
-                                                    shape = com.UIN.Tool.ui.theme.Shape.ChipShape
+                                                    shape = Shape.ChipShape
                                                 ) {
                                                     Text(
                                                         if (it) "可达" else "不可达",

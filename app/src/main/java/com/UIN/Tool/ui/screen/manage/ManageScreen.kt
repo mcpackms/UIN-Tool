@@ -391,12 +391,8 @@ private fun ManageMenuCard(
     UIComponents.Card(
         modifier = modifier
             .fillMaxWidth()
-            .heightIntrinsic(IntrinsicSize.Min)
             .scale(scale)
-            .clickable(
-                onClick = item.onClick,
-                onClickLabel = item.title
-            ) { isPressed = true },
+            .clickable(onClick = item.onClick) { isPressed = true },
         shape = CardShape,
     ) {
         Column(

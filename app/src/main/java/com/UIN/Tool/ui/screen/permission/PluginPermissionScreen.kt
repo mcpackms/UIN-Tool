@@ -307,7 +307,7 @@ fun PluginPermissionScreen() {
                 pluginPermissions.isEmpty() -> {
                     UIComponents.EmptyState(
                         title = "该插件没有声明权限",
-                        subtitle = "插件在 plugin.json 中声明所需权限",
+                        description = "插件在 plugin.json 中声明所需权限",
                         icon = Icons.Default.Security
                     )
                 }

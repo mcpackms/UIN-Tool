@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.UIN.Tool.core.di.ServiceLocator
 import com.UIN.Tool.ui.components.Spacing
 import com.UIN.Tool.ui.components.UIComponents
+import com.UIN.Tool.ui.theme.Shape
 import com.UIN.Tool.utils.PermissionUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -158,7 +159,7 @@ fun PermissionManagerScreen() {
         ) {
             // ==================== 插件权限管理入口卡片 ====================
             item {
-                UIComponents.Card(
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
@@ -170,7 +171,8 @@ fun PermissionManagerScreen() {
                         },
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
+                    ),
+                    shape = Shape.CardShape
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically

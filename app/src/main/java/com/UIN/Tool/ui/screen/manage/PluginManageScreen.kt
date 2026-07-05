@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.UIN.Tool.ui.components.Spacing
+import com.UIN.Tool.ui.theme.Shape
 import com.UIN.Tool.R
 import com.UIN.Tool.core.di.ServiceLocator
 import com.UIN.Tool.data.local.PreferenceManager
@@ -615,7 +617,7 @@ fun PluginManageScreen(
                     } else {
                         "暂无已安装插件"
                     },
-                    subtitle = if (searchText.isEmpty() && selectedCategory == "全部") {
+                    description = if (searchText.isEmpty() && selectedCategory == "全部") {
                         "点击「导入」按钮导入插件文件"
                     } else null,
                     icon = Icons.Default.Extension
@@ -812,7 +814,7 @@ fun PluginManageItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onDetail() },
-        shape = com.UIN.Tool.ui.theme.Shape.CardShape,
+        shape = Shape.CardShape,
         colors = CardDefaults.cardColors(
             containerColor = if (hasMissingPermissions) 
                 MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
@@ -949,7 +951,7 @@ fun PluginManageItem(
                     if (plugin.isWebPlugin()) {
                         Surface(
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = com.UIN.Tool.ui.theme.Shape.ChipShape
+                            shape = Shape.ChipShape
                         ) {
                             Text(
                                 text = "Web",
@@ -962,7 +964,7 @@ fun PluginManageItem(
                     } else {
                         Surface(
                             color = MaterialTheme.colorScheme.tertiaryContainer,
-                            shape = com.UIN.Tool.ui.theme.Shape.ChipShape
+                            shape = Shape.ChipShape
                         ) {
                             Text(
                                 text = "原生",
@@ -1056,7 +1058,7 @@ fun PluginDetailDialog(
                 if (plugin.isWebPlugin()) {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = com.UIN.Tool.ui.theme.Shape.ChipShape
+                        shape = Shape.ChipShape
                     ) {
                         Text(
                             "Web",
@@ -1069,7 +1071,7 @@ fun PluginDetailDialog(
                 } else {
                     Surface(
                         color = MaterialTheme.colorScheme.tertiaryContainer,
-                        shape = com.UIN.Tool.ui.theme.Shape.ChipShape
+                        shape = Shape.ChipShape
                     ) {
                         Text(
                             "原生",
@@ -1146,7 +1148,7 @@ fun PluginDetailDialog(
                             if (permissionSummary.isAllGranted) {
                                 Surface(
                                     color = MaterialTheme.colorScheme.primaryContainer,
-                                    shape = com.UIN.Tool.ui.theme.Shape.ChipShape
+                                    shape = Shape.ChipShape
                                 ) {
                                     Text(
                                         "已授权",
@@ -1159,7 +1161,7 @@ fun PluginDetailDialog(
                             } else {
                                 Surface(
                                     color = MaterialTheme.colorScheme.errorContainer,
-                                    shape = com.UIN.Tool.ui.theme.Shape.ChipShape
+                                    shape = Shape.ChipShape
                                 ) {
                                     Text(
                                         "${permissionSummary.denied} 项未授权",
@@ -1320,7 +1322,7 @@ fun PermissionManagementDialog(
                 if (allGranted && permissions.isNotEmpty()) {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = com.UIN.Tool.ui.theme.Shape.ChipShape
+                        shape = Shape.ChipShape
                     ) {
                         Text(
                             "已授权",
