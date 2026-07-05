@@ -11,7 +11,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -20,11 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.UIN.Tool.ui.components.Spacing
 import com.UIN.Tool.R
 import com.UIN.Tool.core.di.ServiceLocator
 import com.UIN.Tool.data.local.PreferenceManager
@@ -429,7 +430,7 @@ fun PluginManageScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(Spacing.md)
     ) {
         // ==================== 标题栏 ====================
         Row(
@@ -437,33 +438,41 @@ fun PluginManageScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            UIComponents.TitleText("插件管理")
-            Row {
-                UIComponents.IconButton(
-                    icon = Icons.Default.Refresh,
-                    onClick = { loadPlugins() }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                UIComponents.ConnectorMark(
+                    size = 16.dp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.width(Spacing.sm))
+                Text(
+                    text = "插件管理",
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
+            UIComponents.IconButton(
+                icon = Icons.Default.Refresh,
+                onClick = { loadPlugins() }
+            )
         }
+
+        Spacer(modifier = Modifier.height(Spacing.sm))
 
         // ==================== 搜索栏 ====================
         UIComponents.TextInput(
             value = searchText,
             onValueChange = { searchText = it },
-            placeholder = "搜索插件...",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
+            placeholder = "搜索插件…",
+            modifier = Modifier.fillMaxWidth(),
             leadingIcon = Icons.Default.Search
         )
+
+        Spacer(modifier = Modifier.height(Spacing.xs))
 
         // ==================== 分类筛选 ====================
         if (categories.size > 1) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
             ) {
                 categories.forEach { category ->
                     UIComponents.Chip(
@@ -477,22 +486,16 @@ fun PluginManageScreen(
 
         // ==================== 进度显示 ====================
         if (exportProgress.isNotEmpty()) {
-            UIComponents.Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-            ) {
+            Spacer(Modifier.height(Spacing.xs))
+            UIComponents.Card(modifier = Modifier.fillMaxWidth()) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
+                        modifier = Modifier.size(16.dp),
                         strokeWidth = 2.dp
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(Spacing.sm))
                     Text(
                         text = exportProgress,
                         style = MaterialTheme.typography.bodySmall,
@@ -502,12 +505,12 @@ fun PluginManageScreen(
             }
         }
 
+        Spacer(modifier = Modifier.height(Spacing.sm))
+
         // ==================== 操作按钮 ====================
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
         ) {
             UIComponents.PrimaryButton(
                 text = "导入",
@@ -532,20 +535,20 @@ fun PluginManageScreen(
             )
         }
 
+        Spacer(modifier = Modifier.height(Spacing.xs))
+
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
         ) {
             UIComponents.SecondaryButton(
-                text = "导出 (${selectedPluginIds.size})",
+                text = "导出（${selectedPluginIds.size}）",
                 icon = Icons.Default.FileDownload,
                 onClick = { exportSelectedPlugins() },
                 modifier = Modifier.weight(1f),
                 enabled = selectedPluginIds.isNotEmpty() && !isLoading
             )
-            UIComponents.SecondaryButton(
+            UIComponents.GhostButton(
                 text = "删除",
                 icon = Icons.Default.Delete,
                 onClick = {
@@ -559,40 +562,41 @@ fun PluginManageScreen(
             )
         }
 
+        Spacer(modifier = Modifier.height(Spacing.xs))
+
         // ==================== 统计信息 ====================
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "共 ${filteredPlugins.size} 个插件",
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontFamily = FontFamily.Monospace
+                ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
             ) {
-                TextButton(
-                    onClick = {
-                        selectedPluginIds = if (selectedPluginIds.size == filteredPlugins.size) {
-                            emptySet()
-                        } else {
-                            filteredPlugins.map { it.pluginId }.toSet()
-                        }
+                TextButton(onClick = {
+                    selectedPluginIds = if (selectedPluginIds.size == filteredPlugins.size) {
+                        emptySet()
+                    } else {
+                        filteredPlugins.map { it.pluginId }.toSet()
                     }
-                ) {
+                }) {
                     Text(
                         if (selectedPluginIds.size == filteredPlugins.size) "取消全选" else "全选",
-                        fontSize = 12.sp
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
                 if (selectedPluginIds.isNotEmpty()) {
                     Text(
                         text = "已选 ${selectedPluginIds.size} 个",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -602,57 +606,24 @@ fun PluginManageScreen(
         // ==================== 插件列表 ====================
         when {
             isLoading && plugins.isEmpty() -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator()
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "加载插件中...",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+                UIComponents.FullScreenLoading()
             }
             filteredPlugins.isEmpty() -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            Icons.Default.Extension,
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = if (searchText.isNotEmpty() || selectedCategory != "全部") {
-                                "没有匹配的插件"
-                            } else {
-                                "暂无已安装插件"
-                            },
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        if (searchText.isEmpty() && selectedCategory == "全部") {
-                            Text(
-                                text = "点击「导入」按钮导入插件文件",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 8.dp)
-                            )
-                        }
-                    }
-                }
+                UIComponents.EmptyState(
+                    title = if (searchText.isNotEmpty() || selectedCategory != "全部") {
+                        "没有匹配的插件"
+                    } else {
+                        "暂无已安装插件"
+                    },
+                    subtitle = if (searchText.isEmpty() && selectedCategory == "全部") {
+                        "点击「导入」按钮导入插件文件"
+                    } else null,
+                    icon = Icons.Default.Extension
+                )
             }
             else -> {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.sm),
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(filteredPlugins) { plugin ->
@@ -841,19 +812,18 @@ fun PluginManageItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onDetail() },
-        shape = RoundedCornerShape(12.dp),
+        shape = com.UIN.Tool.ui.theme.Shape.CardShape,
         colors = CardDefaults.cardColors(
             containerColor = if (hasMissingPermissions) 
-                Color(0xFFFFF3E0) 
+                MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
             else 
                 MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(Spacing.md),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
@@ -978,26 +948,28 @@ fun PluginManageItem(
                     
                     if (plugin.isWebPlugin()) {
                         Surface(
-                            color = Color(0xFFE3F2FD),
-                            shape = RoundedCornerShape(4.dp)
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = com.UIN.Tool.ui.theme.Shape.ChipShape
                         ) {
                             Text(
-                                text = "🌐 Web",
+                                text = "Web",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = Color(0xFF1565C0),
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp)
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.padding(horizontal = Spacing.sm, vertical = 1.dp)
                             )
                         }
                     } else {
                         Surface(
-                            color = Color(0xFFFFF3E0),
-                            shape = RoundedCornerShape(4.dp)
+                            color = MaterialTheme.colorScheme.tertiaryContainer,
+                            shape = com.UIN.Tool.ui.theme.Shape.ChipShape
                         ) {
                             Text(
-                                text = "📱 原生",
+                                text = "原生",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = Color(0xFFE65100),
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp)
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                modifier = Modifier.padding(horizontal = Spacing.sm, vertical = 1.dp)
                             )
                         }
                     }
@@ -1083,26 +1055,28 @@ fun PluginDetailDialog(
                 Text(plugin.name, style = MaterialTheme.typography.titleLarge)
                 if (plugin.isWebPlugin()) {
                     Surface(
-                        color = Color(0xFFE3F2FD),
-                        shape = RoundedCornerShape(4.dp)
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = com.UIN.Tool.ui.theme.Shape.ChipShape
                     ) {
                         Text(
                             "Web",
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color(0xFF1565C0),
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.padding(horizontal = Spacing.sm, vertical = 2.dp)
                         )
                     }
                 } else {
                     Surface(
-                        color = Color(0xFFFFF3E0),
-                        shape = RoundedCornerShape(4.dp)
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        shape = com.UIN.Tool.ui.theme.Shape.ChipShape
                     ) {
                         Text(
                             "原生",
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color(0xFFE65100),
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            modifier = Modifier.padding(horizontal = Spacing.sm, vertical = 2.dp)
                         )
                     }
                 }
@@ -1171,26 +1145,28 @@ fun PluginDetailDialog(
                             )
                             if (permissionSummary.isAllGranted) {
                                 Surface(
-                                    color = Color(0xFF4CAF50),
-                                    shape = RoundedCornerShape(4.dp)
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = com.UIN.Tool.ui.theme.Shape.ChipShape
                                 ) {
                                     Text(
-                                        "✅ 已授权",
+                                        "已授权",
                                         style = MaterialTheme.typography.labelSmall,
-                                        color = Color.White,
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        modifier = Modifier.padding(horizontal = Spacing.sm, vertical = 2.dp)
                                     )
                                 }
                             } else {
                                 Surface(
-                                    color = Color(0xFFFF9800),
-                                    shape = RoundedCornerShape(4.dp)
+                                    color = MaterialTheme.colorScheme.errorContainer,
+                                    shape = com.UIN.Tool.ui.theme.Shape.ChipShape
                                 ) {
                                     Text(
-                                        "⚠️ ${permissionSummary.denied} 项未授权",
+                                        "${permissionSummary.denied} 项未授权",
                                         style = MaterialTheme.typography.labelSmall,
-                                        color = Color.White,
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        modifier = Modifier.padding(horizontal = Spacing.sm, vertical = 2.dp)
                                     )
                                 }
                             }
@@ -1343,14 +1319,15 @@ fun PermissionManagementDialog(
                 Text("🔐 权限管理", style = MaterialTheme.typography.titleMedium)
                 if (allGranted && permissions.isNotEmpty()) {
                     Surface(
-                        color = Color(0xFF4CAF50),
-                        shape = RoundedCornerShape(4.dp)
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = com.UIN.Tool.ui.theme.Shape.ChipShape
                     ) {
                         Text(
                             "已授权",
-                            color = Color.White,
                             style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.padding(horizontal = Spacing.sm, vertical = 2.dp)
                         )
                     }
                 }

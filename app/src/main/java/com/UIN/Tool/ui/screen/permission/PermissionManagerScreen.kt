@@ -6,24 +6,22 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.UIN.Tool.core.di.ServiceLocator
+import com.UIN.Tool.ui.components.Spacing
 import com.UIN.Tool.ui.components.UIComponents
 import com.UIN.Tool.utils.PermissionUtils
 
@@ -121,19 +119,33 @@ fun PermissionManagerScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("权限管理") },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        UIComponents.ConnectorMark(
+                            size = 14.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                        Spacer(Modifier.width(Spacing.sm))
+                        Text("权限管理", style = MaterialTheme.typography.titleMedium)
+                    }
+                },
                 navigationIcon = {
                     UIComponents.IconButton(
-                        icon = Icons.Default.ArrowBack,
-                        onClick = { activity?.finish() }
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        onClick = { activity?.finish() },
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 },
                 actions = {
                     UIComponents.IconButton(
                         icon = Icons.Default.Refresh,
-                        onClick = { refreshKey++ }
+                        onClick = { refreshKey++ },
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             )
         }
     ) { paddingValues ->
@@ -141,12 +153,12 @@ fun PermissionManagerScreen() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(Spacing.md),
+            verticalArrangement = Arrangement.spacedBy(Spacing.sm)
         ) {
             // ==================== 插件权限管理入口卡片 ====================
             item {
-                Card(
+                UIComponents.Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
@@ -156,47 +168,29 @@ fun PermissionManagerScreen() {
                                 Toast.makeText(context, "插件权限功能开发中", Toast.LENGTH_SHORT).show()
                             }
                         },
-                    shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // 图标 - 使用 Surface 替代 Box + background
-                        Surface(
-                            modifier = Modifier.size(48.dp),
-                            shape = RoundedCornerShape(10.dp),
+                        UIComponents.ConnectorMark(
+                            size = 12.dp,
                             color = MaterialTheme.colorScheme.primary
-                        ) {
-                            Box(
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    Icons.Default.Extension,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.size(28.dp)
-                                )
-                            }
-                        }
-                        
-                        Spacer(modifier = Modifier.width(16.dp))
+                        )
+                        Spacer(Modifier.width(Spacing.sm))
                         
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "插件权限管理",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                             Text(
-                                text = "管理每个插件声明的权限 →",
-                                style = MaterialTheme.typography.bodyMedium,
+                                text = "管理每个插件声明的权限",
+                                style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                             )
                         }
@@ -204,7 +198,7 @@ fun PermissionManagerScreen() {
                         Icon(
                             Icons.Default.KeyboardArrowRight,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
                         )
                     }
                 }
@@ -217,7 +211,18 @@ fun PermissionManagerScreen() {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    UIComponents.TitleText("应用权限")
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        UIComponents.ConnectorMark(
+                            size = 12.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.width(Spacing.sm))
+                        Text(
+                            text = "应用权限",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                     UIComponents.PrimaryButton(
                         text = "一键授权",
                         onClick = { requestAllPermissions() },
@@ -312,9 +317,11 @@ fun PermissionManagerScreen() {
 
             // 底部提示
             item {
-                Spacer(modifier = Modifier.height(16.dp))
-                UIComponents.CaptionText(
-                    "💡 提示：部分权限（如悬浮窗、修改系统设置）需要在系统设置中手动开启"
+                Spacer(modifier = Modifier.height(Spacing.sm))
+                Text(
+                    text = "提示：部分权限（如悬浮窗、修改系统设置）需要在系统设置中手动开启",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 )
             }
         }

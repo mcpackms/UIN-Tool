@@ -41,10 +41,10 @@ private fun safeParseColor(colorString: String): Color {
         if (colorString.isNotEmpty() && colorString.startsWith("#") && colorString.length >= 7) {
             Color(android.graphics.Color.parseColor(colorString))
         } else {
-            Color(0xFF1A3A4A)
+            Color(0xFF0D8A7A)
         }
     } catch (e: Exception) {
-        Color(0xFF1A3A4A)
+        Color(0xFF0D8A7A)
     }
 }
 
@@ -466,7 +466,7 @@ fun UIConfigScreen(
                                 color = if (selectedTab == index) 
                                     safeParseColor(configState.primaryColor) 
                                 else 
-                                    Color(0xFF9AA6B2),
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                                 fontWeight = if (selectedTab == index) 
                                     FontWeight.Bold 
                                 else 
@@ -618,7 +618,7 @@ fun UIConfigScreen(
                                         colors = SliderDefaults.colors(
                                             thumbColor = safeParseColor(configState.primaryColor),
                                             activeTrackColor = safeParseColor(configState.primaryColor),
-                                            inactiveTrackColor = Color(0xFFE0E4E8)
+                                            inactiveTrackColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
                                         )
                                     )
                                 }
@@ -708,7 +708,7 @@ fun UIConfigScreen(
                                         colors = SliderDefaults.colors(
                                             thumbColor = safeParseColor(configState.primaryColor),
                                             activeTrackColor = safeParseColor(configState.primaryColor),
-                                            inactiveTrackColor = Color(0xFFE0E4E8)
+                                            inactiveTrackColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
                                         )
                                     )
                                 }
@@ -737,7 +737,7 @@ fun UIConfigScreen(
                                         colors = SliderDefaults.colors(
                                             thumbColor = safeParseColor(configState.primaryColor),
                                             activeTrackColor = safeParseColor(configState.primaryColor),
-                                            inactiveTrackColor = Color(0xFFE0E4E8)
+                                            inactiveTrackColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
                                         )
                                     )
                                 }
@@ -764,7 +764,7 @@ fun UIConfigScreen(
                                         colors = SliderDefaults.colors(
                                             thumbColor = safeParseColor(configState.primaryColor),
                                             activeTrackColor = safeParseColor(configState.primaryColor),
-                                            inactiveTrackColor = Color(0xFFE0E4E8)
+                                            inactiveTrackColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
                                         )
                                     )
                                 }
@@ -791,7 +791,7 @@ fun UIConfigScreen(
                                         colors = SliderDefaults.colors(
                                             thumbColor = safeParseColor(configState.primaryColor),
                                             activeTrackColor = safeParseColor(configState.primaryColor),
-                                            inactiveTrackColor = Color(0xFFE0E4E8)
+                                            inactiveTrackColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
                                         )
                                     )
                                 }
@@ -818,7 +818,7 @@ fun UIConfigScreen(
                                         colors = SliderDefaults.colors(
                                             thumbColor = safeParseColor(configState.primaryColor),
                                             activeTrackColor = safeParseColor(configState.primaryColor),
-                                            inactiveTrackColor = Color(0xFFE0E4E8)
+                                            inactiveTrackColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
                                         )
                                     )
                                 }
@@ -894,7 +894,7 @@ fun UIConfigScreen(
                     saveMessage?.let {
                         Text(
                             it,
-                            color = if (it.contains("✅")) Color(0xFF4CAF50) else Color(0xFFF44336),
+                            color = if (it.contains("✅")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
                     }

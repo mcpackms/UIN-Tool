@@ -1,4 +1,3 @@
-// app/src/main/java/com/UIN/Tool/ui/screen/manage/GitHubMirrorScreen.kt
 package com.UIN.Tool.ui.screen.manage
 
 import android.net.Uri
@@ -9,18 +8,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.UIN.Tool.data.local.PreferenceManager
 import com.UIN.Tool.data.remote.MirrorManager
 import com.UIN.Tool.domain.model.MirrorItem
 import com.UIN.Tool.log.Logger
+import com.UIN.Tool.ui.components.Spacing
 import com.UIN.Tool.ui.components.UIComponents
 import com.UIN.Tool.utils.Constants
 import kotlinx.coroutines.launch
@@ -28,9 +32,7 @@ import okhttp3.OkHttpClient
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GitHubMirrorScreen(
-    navController: NavController
-) {
+fun GitHubMirrorScreen(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val preferenceManager = PreferenceManager(context)
@@ -84,10 +86,8 @@ fun GitHubMirrorScreen(
                     }
                 }
                 showTestResult = "成功导入 $count 个镜像站"
-                Logger.success("GitHubMirror", "导入 $count 个镜像站")
             } catch (e: Exception) {
                 showTestResult = "导入失败: ${e.message}"
-                Logger.e("GitHubMirror", "导入镜像失败", e)
             } finally {
                 isLoading = false
             }
@@ -105,10 +105,8 @@ fun GitHubMirrorScreen(
             }
             context.contentResolver.openOutputStream(uri)?.write(content.toString().toByteArray())
             showTestResult = "导出成功"
-            Logger.success("GitHubMirror", "导出镜像站列表")
         } catch (e: Exception) {
             showTestResult = "导出失败: ${e.message}"
-            Logger.e("GitHubMirror", "导出镜像失败", e)
         }
     }
 
@@ -116,15 +114,13 @@ fun GitHubMirrorScreen(
         scope.launch {
             try {
                 isLoading = true
-                showTestResult = "正在测试镜像站..."
+                showTestResult = "正在测试镜像站…"
                 val tested = mirrorManager.testMirrors(mirrors)
                 mirrors = tested
                 val reachableCount = tested.count { it.reachable == true }
                 showTestResult = "测试完成，$reachableCount/${tested.size} 个可达"
-                Logger.success("GitHubMirror", "测试完成")
             } catch (e: Exception) {
                 showTestResult = "测试失败: ${e.message}"
-                Logger.e("GitHubMirror", "测试镜像失败", e)
             } finally {
                 isLoading = false
             }
@@ -133,54 +129,76 @@ fun GitHubMirrorScreen(
 
     val importLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            importMirrors(uri)
-        }
-    }
+    ) { uri: Uri? -> uri?.let { importMirrors(it) } }
 
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            exportMirrors(uri)
-        }
-    }
+    ) { uri: Uri? -> uri?.let { exportMirrors(it) } }
 
     LaunchedEffect(Unit) { loadMirrors() }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("GitHub 加速") },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        UIComponents.ConnectorMark(
+                            size = 14.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                        Spacer(Modifier.width(Spacing.sm))
+                        Text("GitHub 加速", style = MaterialTheme.typography.titleMedium)
+                    }
+                },
                 navigationIcon = {
                     UIComponents.IconButton(
-                        icon = Icons.Default.ArrowBack,
-                        onClick = { navController.navigateUp() }
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        onClick = { navController.navigateUp() },
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 },
                 actions = {
                     UIComponents.IconButton(
                         icon = Icons.Default.Refresh,
-                        onClick = { loadMirrors() }
+                        onClick = { loadMirrors() },
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             )
         }
     ) { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(Spacing.md)
+        ) {
             // CDN 开关
             UIComponents.Card(
-                modifier = Modifier.fillMaxWidth().clickable { useCdn = !useCdn }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { useCdn = !useCdn }
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        UIComponents.BodyText("CDN 加速")
-                        UIComponents.CaptionText("使用 CDN 代理加速下载")
+                        Text(
+                            text = "⟩ CDN 加速",
+                            style = MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "使用 CDN 代理加速下载",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                     UIComponents.ToggleSwitch(
                         checked = useCdn,
@@ -189,12 +207,12 @@ fun GitHubMirrorScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(Modifier.height(Spacing.md))
 
             // 操作按钮
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
             ) {
                 UIComponents.SecondaryButton(
                     text = "添加",
@@ -211,9 +229,11 @@ fun GitHubMirrorScreen(
                 )
             }
 
+            Spacer(Modifier.height(Spacing.xs))
+
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
             ) {
                 UIComponents.SecondaryButton(
                     text = "导出",
@@ -222,7 +242,7 @@ fun GitHubMirrorScreen(
                     modifier = Modifier.weight(1f),
                     enabled = !isLoading
                 )
-                UIComponents.SecondaryButton(
+                UIComponents.GhostButton(
                     text = "测试",
                     icon = Icons.Default.Check,
                     onClick = { testAllMirrors() },
@@ -231,38 +251,38 @@ fun GitHubMirrorScreen(
                 )
             }
 
-            UIComponents.SecondaryButton(
+            UIComponents.TextButton(
                 text = "重置为默认",
                 icon = Icons.Default.Refresh,
                 onClick = { showResetDialog = true },
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(Modifier.height(Spacing.md))
 
             // 测试结果
             showTestResult?.let { result ->
-                UIComponents.Card(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-                ) {
-                    UIComponents.BodyText(
-                        result,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp)
+                UIComponents.Card(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = result,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontFamily = FontFamily.Monospace
+                        ),
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(Spacing.md)
                     )
                 }
+                Spacer(Modifier.height(Spacing.sm))
             }
 
+            // 镜像列表
             if (mirrors.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    UIComponents.BodyText("暂无镜像站")
-                }
+                UIComponents.EmptyState(
+                    title = "暂无镜像站",
+                    icon = Icons.Default.Cloud
+                )
             } else {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     items(mirrors) { mirror ->
                         UIComponents.Card(
                             modifier = Modifier
@@ -275,12 +295,16 @@ fun GitHubMirrorScreen(
                                     }
                                 }
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                UIComponents.ConnectorMark(
+                                    size = 10.dp,
+                                    color = if (enabledMirrors.contains(mirror.url))
+                                        MaterialTheme.colorScheme.primary
+                                    else
+                                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                                )
+                                Spacer(Modifier.width(Spacing.sm))
+
                                 Checkbox(
                                     checked = enabledMirrors.contains(mirror.url),
                                     onCheckedChange = {
@@ -295,44 +319,70 @@ fun GitHubMirrorScreen(
                                         uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 )
+
                                 Column(modifier = Modifier.weight(1f)) {
                                     Row(
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        UIComponents.BodyText(mirror.name)
-                                        if (mirror.isDefault) {
-                                            BadgedBox(
-                                                badge = {
-                                                    Badge(
-                                                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                                                    ) {
-                                                        Text("默认")
-                                                    }
+                                        Text(
+                                            text = mirror.name,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                                            if (mirror.isDefault) {
+                                                Surface(
+                                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                                    shape = com.UIN.Tool.ui.theme.Shape.ChipShape
+                                                ) {
+                                                    Text(
+                                                        "默认",
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                        modifier = Modifier.padding(horizontal = Spacing.sm, vertical = 1.dp)
+                                                    )
                                                 }
-                                            ) {}
-                                        }
-                                        mirror.reachable?.let {
-                                            BadgedBox(
-                                                badge = {
-                                                    Badge(
-                                                        containerColor = if (it) {
-                                                            MaterialTheme.colorScheme.primaryContainer
-                                                        } else {
-                                                            MaterialTheme.colorScheme.errorContainer
-                                                        }
-                                                    ) {
-                                                        Text(if (it) "✅ 可达" else "❌ 不可达")
-                                                    }
+                                            }
+                                            mirror.reachable?.let {
+                                                Surface(
+                                                    color = if (it)
+                                                        MaterialTheme.colorScheme.primaryContainer
+                                                    else
+                                                        MaterialTheme.colorScheme.errorContainer,
+                                                    shape = com.UIN.Tool.ui.theme.Shape.ChipShape
+                                                ) {
+                                                    Text(
+                                                        if (it) "可达" else "不可达",
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                        color = if (it)
+                                                            MaterialTheme.colorScheme.onPrimaryContainer
+                                                        else
+                                                            MaterialTheme.colorScheme.onErrorContainer,
+                                                        modifier = Modifier.padding(horizontal = Spacing.sm, vertical = 1.dp)
+                                                    )
                                                 }
-                                            ) {}
+                                            }
                                         }
                                     }
-                                    UIComponents.CaptionText(mirror.url)
+                                    Text(
+                                        text = mirror.url,
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontFamily = FontFamily.Monospace,
+                                            fontSize = 10.sp
+                                        ),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                    )
                                     if (mirror.remark.isNotEmpty()) {
-                                        UIComponents.CaptionText(mirror.remark)
+                                        Text(
+                                            text = mirror.remark,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
                                     }
                                 }
+
                                 if (!mirror.isDefault) {
                                     UIComponents.IconButton(
                                         icon = Icons.Default.Close,
@@ -340,7 +390,7 @@ fun GitHubMirrorScreen(
                                             mirrors = mirrors.filter { it.url != mirror.url }
                                             enabledMirrors = enabledMirrors - mirror.url
                                         },
-                                        tint = MaterialTheme.colorScheme.error
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                                     )
                                 }
                             }
@@ -349,8 +399,8 @@ fun GitHubMirrorScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            
+            Spacer(Modifier.height(Spacing.md))
+
             UIComponents.PrimaryButton(
                 text = "保存设置",
                 onClick = {
@@ -377,12 +427,12 @@ fun GitHubMirrorScreen(
         var name by remember { mutableStateOf("") }
         var url by remember { mutableStateOf("") }
         var remark by remember { mutableStateOf("") }
-        
+
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
-            title = { Text("添加镜像站") },
+            title = { Text("⟩ 添加镜像站") },
             text = {
-                Column {
+                Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     UIComponents.TextInput(
                         value = name,
                         onValueChange = { name = it },
@@ -390,7 +440,6 @@ fun GitHubMirrorScreen(
                         placeholder = "如: FastGit",
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
                     UIComponents.TextInput(
                         value = url,
                         onValueChange = { url = it },
@@ -398,7 +447,6 @@ fun GitHubMirrorScreen(
                         placeholder = "https://example.com",
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
                     UIComponents.TextInput(
                         value = remark,
                         onValueChange = { remark = it },

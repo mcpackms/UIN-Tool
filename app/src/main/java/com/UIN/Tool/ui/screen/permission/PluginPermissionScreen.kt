@@ -4,27 +4,26 @@ package com.UIN.Tool.ui.screen.permission
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.UIN.Tool.core.di.ServiceLocator
 import com.UIN.Tool.domain.model.PluginInfo
 import com.UIN.Tool.plugin.PluginPermissionManager
+import com.UIN.Tool.ui.components.Spacing
 import com.UIN.Tool.ui.components.UIComponents
+import com.UIN.Tool.ui.theme.Shape
 import com.UIN.Tool.utils.PermissionUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,19 +109,33 @@ fun PluginPermissionScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("插件权限") },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        UIComponents.ConnectorMark(
+                            size = 14.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                        Spacer(Modifier.width(Spacing.sm))
+                        Text("插件权限", style = MaterialTheme.typography.titleMedium)
+                    }
+                },
                 navigationIcon = {
                     UIComponents.IconButton(
-                        icon = Icons.Default.ArrowBack,
-                        onClick = { activity?.finish() }
+                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        onClick = { activity?.finish() },
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 },
                 actions = {
                     UIComponents.IconButton(
                         icon = Icons.Default.Refresh,
-                        onClick = { refreshPermissions() }
+                        onClick = { refreshPermissions() },
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             )
         }
     ) { paddingValues ->
@@ -130,84 +143,86 @@ fun PluginPermissionScreen() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(Spacing.md)
         ) {
             if (plugins.isEmpty()) {
-                UIComponents.Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                UIComponents.Card(modifier = Modifier.fillMaxWidth()) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
                             Icons.Default.Extension,
                             contentDescription = null,
-                            modifier = Modifier.size(48.dp),
+                            modifier = Modifier.size(40.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        UIComponents.BodyText("暂无已安装插件")
-                        UIComponents.CaptionText("请先在管理页面导入插件")
+                        Spacer(Modifier.height(Spacing.sm))
+                        Text(
+                            text = "暂无已安装插件",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = "请先在管理页面导入插件",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                        )
                     }
                 }
                 return@Scaffold
             }
 
-            // ==================== 插件选择下拉框（白色背景） ====================
+            // 插件选择下拉框
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                UIComponents.BodyText("选择插件:", modifier = Modifier.weight(0.3f))
+                Text(
+                    text = "选择插件",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
 
                 var expanded by remember { mutableStateOf(false) }
                 val selectedPlugin = plugins.find { it.pluginId == selectedPluginId }
 
-                // ✅ 白色背景下拉框
                 ExposedDropdownMenuBox(
                     expanded = expanded,
-                    onExpandedChange = { expanded = it }
+                    onExpandedChange = { expanded = it },
+                    modifier = Modifier.weight(1f)
                 ) {
                     OutlinedTextField(
                         value = selectedPlugin?.name ?: "选择插件",
                         onValueChange = {},
                         readOnly = true,
                         modifier = Modifier
-                            .weight(0.7f)
-                            .menuAnchor()
-                            .background(Color.White, RoundedCornerShape(8.dp)),
+                            .fillMaxWidth()
+                            .menuAnchor(),
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF1A3A4A),
-                            unfocusedBorderColor = Color(0xFFE0E0E0),
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                            cursorColor = Color(0xFF1A3A4A)
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface
                         ),
-                        shape = RoundedCornerShape(8.dp),
-                        textStyle = MaterialTheme.typography.bodyMedium.copy(
-                            color = Color(0xFF1A1A1A)
-                        )
+                        shape = Shape.InputShape,
+                        textStyle = MaterialTheme.typography.bodySmall
                     )
                     ExposedDropdownMenu(
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
-                        containerColor = Color.White,
-                        shape = RoundedCornerShape(8.dp)
+                        containerColor = MaterialTheme.colorScheme.surface
                     ) {
                         plugins.forEach { plugin ->
                             DropdownMenuItem(
                                 text = {
                                     Text(
                                         plugin.name,
-                                        color = Color(0xFF1A1A1A),
-                                        fontSize = 14.sp
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 },
                                 onClick = {
@@ -215,19 +230,18 @@ fun PluginPermissionScreen() {
                                     loadPluginPermissions(plugin.pluginId)
                                     expanded = false
                                 }
-                                // ✅ 移除 MenuItemDefaults.colors
                             )
                         }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.md))
 
             // 一键授权
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
             ) {
                 UIComponents.PrimaryButton(
                     text = "一键授权所有权限",
@@ -245,103 +259,105 @@ fun PluginPermissionScreen() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.sm))
 
             // 插件信息
             selectedPluginId?.let { pluginId ->
                 val plugin = plugins.find { it.pluginId == pluginId }
                 if (plugin != null) {
-                    UIComponents.Card(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp)
-                        ) {
-                            UIComponents.BodyText("📦 ${plugin.name}")
-                            UIComponents.CaptionText("ID: ${plugin.pluginId} | 版本: ${plugin.versionName}")
-                            UIComponents.CaptionText("声明权限: ${plugin.permissions.size} 个")
+                    UIComponents.Card(modifier = Modifier.fillMaxWidth()) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            UIComponents.ConnectorMark(
+                                size = 10.dp,
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                            )
+                            Spacer(Modifier.width(Spacing.sm))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = plugin.name,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = "ID: ${plugin.pluginId} | 版本: ${plugin.versionName}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = "声明权限: ${plugin.permissions.size} 个",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Spacing.sm))
                 }
             }
 
             // 权限列表
             when {
                 selectedPluginId == null -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        UIComponents.BodyText("请选择插件")
-                    }
+                    UIComponents.EmptyState(
+                        title = "请选择插件",
+                        icon = Icons.Default.Security
+                    )
                 }
                 pluginPermissions.isEmpty() -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                Icons.Default.Security,
-                                contentDescription = null,
-                                modifier = Modifier.size(48.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            UIComponents.TitleText("该插件没有声明权限")
-                            UIComponents.CaptionText("插件在 plugin.json 中声明所需权限")
-                        }
-                    }
+                    UIComponents.EmptyState(
+                        title = "该插件没有声明权限",
+                        subtitle = "插件在 plugin.json 中声明所需权限",
+                        icon = Icons.Default.Security
+                    )
                 }
                 else -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalArrangement = Arrangement.spacedBy(Spacing.xs)
                     ) {
                         items(pluginPermissions.entries.toList()) { (permission, granted) ->
                             UIComponents.Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable {
-                                        if (!granted) {
-                                            togglePermission(permission)
-                                        }
-                                    }
+                                    .clickable { if (!granted) togglePermission(permission) }
                             ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    UIComponents.ConnectorMark(
+                                        size = 8.dp,
+                                        color = if (granted)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                                    )
+                                    Spacer(Modifier.width(Spacing.sm))
+
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
                                             text = PermissionUtils.getPermissionDisplayName(permission),
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = if (granted) {
-                                                MaterialTheme.colorScheme.onPrimaryContainer
-                                            } else {
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontWeight = if (granted) FontWeight.Medium else FontWeight.Normal,
+                                            color = if (granted)
+                                                MaterialTheme.colorScheme.primary
+                                            else
                                                 MaterialTheme.colorScheme.onSurface
-                                            }
                                         )
-                                        UIComponents.CaptionText(permission)
+                                        Text(
+                                            text = permission,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                        )
                                         if (PermissionUtils.isSpecialPermission(permission)) {
-                                            UIComponents.CaptionText(
-                                                "⚠️ 特殊权限，需在系统设置中手动开启",
+                                            Text(
+                                                text = "特殊权限，需在系统设置中手动开启",
+                                                style = MaterialTheme.typography.labelSmall,
                                                 color = MaterialTheme.colorScheme.tertiary
                                             )
                                         }
                                     }
                                     Checkbox(
                                         checked = granted,
-                                        onCheckedChange = {
-                                            if (!granted) {
-                                                togglePermission(permission)
-                                            }
-                                        },
+                                        onCheckedChange = { if (!granted) togglePermission(permission) },
                                         colors = CheckboxDefaults.colors(
                                             checkmarkColor = MaterialTheme.colorScheme.onPrimary,
                                             checkedColor = MaterialTheme.colorScheme.primary,

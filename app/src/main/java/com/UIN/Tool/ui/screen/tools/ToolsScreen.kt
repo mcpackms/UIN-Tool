@@ -1,7 +1,7 @@
-// app/src/main/java/com/UIN/Tool/ui/screen/tools/ToolsScreen.kt
 package com.UIN.Tool.ui.screen.tools
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,12 +16,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.UIN.Tool.core.di.ServiceLocator
 import com.UIN.Tool.domain.model.PluginInfo
 import com.UIN.Tool.plugin.PluginManager
+import com.UIN.Tool.ui.components.Spacing
 import com.UIN.Tool.ui.components.UIComponents
+import com.UIN.Tool.ui.theme.CardShape
 import com.UIN.Tool.utils.PluginShortcutHelper
 import kotlinx.coroutines.launch
 
@@ -39,7 +47,7 @@ fun ToolsScreen() {
     var showShortcutDialog by remember { mutableStateOf<PluginInfo?>(null) }
 
     val categories = remember(plugins) {
-        listOf("全部") + plugins.map { it.category }.distinct().filter { it != "未分类" } + listOf("未分类")
+        listOf("全部") + plugins.map { it.category }.distinct().sorted()
     }
 
     val filteredPlugins = remember(searchText, selectedCategory, plugins) {
@@ -54,82 +62,85 @@ fun ToolsScreen() {
         result
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        // ======== 工具栏 ========
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Spacing.md, vertical = Spacing.sm),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            UIComponents.TitleText("工具箱")
+            UIComponents.SectionHeader("工具箱")
             Row {
                 UIComponents.IconButton(
                     icon = if (isSearching) Icons.Default.Close else Icons.Default.Search,
-                    onClick = { isSearching = !isSearching }
+                    onClick = { isSearching = !isSearching; if (!isSearching) searchText = "" }
                 )
                 UIComponents.IconButton(
-                    icon = if (isGridView) Icons.Default.List else Icons.Default.GridView,
+                    icon = if (isGridView) Icons.Default.ViewList else Icons.Default.GridView,
                     onClick = { isGridView = !isGridView }
                 )
             }
         }
 
+        // ======== 搜索栏 ========
         if (isSearching) {
             UIComponents.TextInput(
                 value = searchText,
                 onValueChange = { searchText = it },
                 placeholder = "搜索插件...",
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                leadingIcon = Icons.Default.Search
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.md),
+                leadingIcon = Icons.Default.Search,
+                singleLine = true
             )
+            Spacer(Modifier.height(Spacing.sm))
         }
 
-        // 分类筛选
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            categories.take(6).forEach { category ->
-                UIComponents.Chip(
-                    label = category,
-                    selected = selectedCategory == category,
-                    onClick = { selectedCategory = category }
-                )
+        // ======== 分类筛选 ========
+        if (categories.size > 1) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.md)
+                    .padding(bottom = Spacing.sm),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
+            ) {
+                categories.forEach { category ->
+                    UIComponents.Chip(
+                        label = category,
+                        selected = selectedCategory == category,
+                        onClick = { selectedCategory = category }
+                    )
+                }
             }
         }
 
         when {
             filteredPlugins.isEmpty() -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            Icons.Default.Extension,
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        UIComponents.BodyText(
-                            if (searchText.isNotEmpty()) "没有找到相关插件" else "暂无插件"
-                        )
-                        UIComponents.CaptionText(
-                            if (searchText.isNotEmpty()) "尝试其他关键词" else "请先在管理页面导入插件"
-                        )
-                    }
-                }
+                UIComponents.EmptyState(
+                    title = if (searchText.isNotEmpty()) "没有找到相关插件" else "暂无插件",
+                    description = if (searchText.isNotEmpty()) "尝试其他关键词"
+                                  else "在管理页面导入插件后即可使用",
+                    icon = Icons.Default.Extension
+                )
             }
             isGridView -> {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.sm),
+                    contentPadding = PaddingValues(horizontal = Spacing.md),
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     items(filteredPlugins) { plugin ->
-                        PluginGridItem(
+                        PluginGridCard(
                             plugin = plugin,
                             onClick = { pluginManager.openPlugin(plugin.pluginId, context) }
                         )
@@ -137,9 +148,13 @@ fun ToolsScreen() {
                 }
             }
             else -> {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+                    contentPadding = PaddingValues(horizontal = Spacing.md),
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     items(filteredPlugins) { plugin ->
-                        PluginListItem(
+                        PluginListCard(
                             plugin = plugin,
                             onClick = { pluginManager.openPlugin(plugin.pluginId, context) },
                             onLongClick = { showShortcutDialog = plugin }
@@ -154,7 +169,7 @@ fun ToolsScreen() {
     showShortcutDialog?.let { plugin ->
         UIComponents.ConfirmDialog(
             title = "创建快捷方式",
-            message = "是否在桌面创建 \"${plugin.name}\" 的快捷方式？",
+            message = "是否在桌面创建「${plugin.name}」的快捷方式？",
             onConfirm = {
                 scope.launch {
                     PluginShortcutHelper.createShortcut(context, plugin)
@@ -166,95 +181,130 @@ fun ToolsScreen() {
     }
 }
 
+// ==================== 列表卡片 ====================
+
 @Composable
-fun PluginListItem(
+private fun PluginListCard(
     plugin: PluginInfo,
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
     UIComponents.Card(
-        modifier = Modifier.fillMaxWidth(),
         onClick = onClick
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .background(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        RoundedCornerShape(8.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    plugin.name.take(1).uppercase(),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-            Spacer(modifier = Modifier.width(16.dp))
+            // 首字母头像 + 连接符
+            UIComponents.PluginAvatar(
+                name = plugin.name,
+                size = 40.dp
+            )
+
+            Spacer(Modifier.width(Spacing.sm))
+
+            // 连接符
+            UIComponents.ConnectorMark(
+                size = 12.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+            )
+
+            Spacer(Modifier.width(Spacing.sm))
+
             Column(modifier = Modifier.weight(1f)) {
-                Text(plugin.name, style = MaterialTheme.typography.titleMedium)
-                UIComponents.BodyText(
-                    plugin.description.ifEmpty { "无描述" }
+                Text(
+                    text = plugin.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-                Row(
-                    modifier = Modifier.padding(top = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    UIComponents.CaptionText("v${plugin.versionName}")
-                    UIComponents.CaptionText(plugin.category)
+                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                    Text(
+                        text = "v${plugin.versionName}",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    if (plugin.category.isNotEmpty()) {
+                        Text(
+                            text = plugin.category,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                     if (plugin.isWebPlugin()) {
-                        UIComponents.CaptionText("Web")
+                        Text(
+                            text = "Web",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
                     }
                 }
             }
+
+            Spacer(Modifier.width(Spacing.sm))
+
             UIComponents.IconButton(
                 icon = Icons.Default.Add,
-                onClick = onLongClick
+                onClick = onLongClick,
+                contentDescription = "创建快捷方式"
             )
         }
     }
 }
 
+// ==================== 网格卡片 ====================
+
 @Composable
-fun PluginGridItem(
+private fun PluginGridCard(
     plugin: PluginInfo,
     onClick: () -> Unit
 ) {
     UIComponents.Card(
-        modifier = Modifier.fillMaxWidth(),
         onClick = onClick
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(Spacing.sm)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .background(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        RoundedCornerShape(12.dp)
-                    ),
-                contentAlignment = Alignment.Center
+            UIComponents.PluginAvatar(
+                name = plugin.name,
+                size = 48.dp
+            )
+
+            Spacer(modifier = Modifier.height(Spacing.sm))
+
+            Text(
+                text = plugin.name,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    plugin.name.take(1).uppercase(),
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    text = "v${plugin.versionName}",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 9.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                UIComponents.ConnectorMark(
+                    size = 8.dp,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(plugin.name, style = MaterialTheme.typography.bodyMedium, maxLines = 1)
-            UIComponents.CaptionText("v${plugin.versionName}")
         }
     }
 }

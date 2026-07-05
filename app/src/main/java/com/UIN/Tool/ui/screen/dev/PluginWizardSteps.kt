@@ -18,9 +18,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.UIN.Tool.ui.components.Spacing
 import com.UIN.Tool.ui.components.UIComponents
 import com.UIN.Tool.utils.FileUtils
 import com.UIN.Tool.utils.formatFileSize
@@ -89,19 +93,20 @@ fun PluginConfigStep(
     onEntryPathChange: (String) -> Unit,
     uiType: String
 ) {
-    Column {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+        UIComponents.SectionHeader("基本信息")
+
         UIComponents.TextInput(
             value = pluginId,
             onValueChange = onPluginIdChange,
-            label = "插件ID",
+            label = "插件 ID",
             placeholder = "com.example.myplugin",
             modifier = Modifier.fillMaxWidth(),
             isError = pluginId.isNotEmpty() && !pluginId.matches(Regex("^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$")),
             supportingText = if (pluginId.isNotEmpty() && !pluginId.matches(Regex("^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"))) {
-                "⚠️ 格式应为域名倒序，如 com.example.myplugin"
+                "格式应为域名倒序，如 com.example.myplugin"
             } else null
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
         UIComponents.TextInput(
             value = pluginName,
@@ -110,7 +115,6 @@ fun PluginConfigStep(
             placeholder = "我的插件",
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
         UIComponents.TextInput(
             value = pluginAuthor,
@@ -119,7 +123,6 @@ fun PluginConfigStep(
             placeholder = "开发者",
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
         UIComponents.TextInput(
             value = pluginDescription,
@@ -129,11 +132,10 @@ fun PluginConfigStep(
             modifier = Modifier.fillMaxWidth(),
             singleLine = false
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
         ) {
             UIComponents.TextInput(
                 value = pluginVersion,
@@ -150,7 +152,6 @@ fun PluginConfigStep(
                 modifier = Modifier.weight(1f)
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
 
         if (uiType == "native") {
             UIComponents.TextInput(
@@ -161,7 +162,7 @@ fun PluginConfigStep(
                 modifier = Modifier.fillMaxWidth(),
                 isError = mainClass.isNotEmpty() && !mainClass.contains("."),
                 supportingText = if (mainClass.isNotEmpty() && !mainClass.contains(".")) {
-                    "⚠️ 必须包含包名，如 com.example.MainPlugin"
+                    "必须包含包名，如 com.example.MainPlugin"
                 } else null
             )
         } else {
@@ -203,13 +204,16 @@ fun PluginIconStep(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
+        UIComponents.SectionHeader("选择图标")
+
+        Spacer(Modifier.height(Spacing.lg))
+
+        // 图标预览
         Box(
             modifier = Modifier
                 .size(120.dp)
-                .background(
-                    MaterialTheme.colorScheme.surfaceVariant,
-                    RoundedCornerShape(16.dp)
-                ),
+                .clip(RoundedCornerShape(Spacing.sm))
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             if (bitmap != null) {
@@ -228,17 +232,16 @@ fun PluginIconStep(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.md))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
         ) {
             UIComponents.PrimaryButton(
                 text = if (iconPath.isNotEmpty()) "更换图标" else "选择图标",
                 icon = Icons.Default.FileUpload,
                 onClick = { iconPickerLauncher.launch("image/*") }
             )
-
             if (iconPath.isNotEmpty()) {
                 UIComponents.SecondaryButton(
                     text = "移除图标",
@@ -247,11 +250,9 @@ fun PluginIconStep(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.sm))
 
-        UIComponents.CaptionText(
-            "建议使用 128x128 像素的 PNG 图片"
-        )
+        UIComponents.CaptionText("建议 128×128 PNG")
     }
 }
 
@@ -262,30 +263,52 @@ fun NativeCodeStep(
     onOpenEditor: () -> Unit,
     fileCount: Int
 ) {
-    Column {
-        UIComponents.Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            UIComponents.BodyText(
-                """
-                    📌 原生插件开发提示
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+        UIComponents.SectionHeader("代码编辑")
 
-                    • 必须实现 PluginInterface 接口的所有方法
-                    • UI 必须通过 Java 代码动态创建，不能使用 XML
-                    • 示例代码已包含基础的 LinearLayout + Button
-                    • 可以添加任何原生 Android 控件
-                    • 修改后需要重新编译生成 DEX
+        UIComponents.Card(modifier = Modifier.fillMaxWidth()) {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                Text(
+                    text = "原生插件开发提示",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                val hints = listOf(
+                    "必须实现 PluginInterface 接口的所有方法",
+                    "UI 必须通过 Java 代码动态创建（不能使用 XML）",
+                    "示例代码已包含基础的 LinearLayout + Button",
+                    "可添加任何原生 Android 控件",
+                    "修改后需重新编译生成 DEX"
+                )
+                hints.forEach { hint ->
+                    Row(verticalAlignment = Alignment.Top) {
+                        UIComponents.ConnectorMark(
+                            size = 10.dp,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                        )
+                        Spacer(Modifier.width(Spacing.xs))
+                        Text(
+                            text = hint,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
 
-                    当前已生成 ${if (fileCount > 0) fileCount else 0} 个代码文件
-                """.trimIndent(),
-                modifier = Modifier.padding(8.dp)
-            )
+                Spacer(Modifier.height(Spacing.xs))
+
+                Text(
+                    text = "当前已生成 ${fileCount} 个代码文件",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                    ),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         UIComponents.PrimaryButton(
-            text = "打开代码编辑器 (${fileCount} 个文件)",
+            text = "打开代码编辑器（${fileCount} 个文件）",
             icon = Icons.Default.Edit,
             onClick = onOpenEditor,
             modifier = Modifier.fillMaxWidth()
@@ -301,61 +324,60 @@ fun WebConfigStep(
     onTemplateTypeChange: (Int) -> Unit,
     onImportWebProject: () -> Unit
 ) {
-    Column {
-        UIComponents.Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            UIComponents.BodyText(
-                """
-                    📌 Web 插件说明
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+        UIComponents.SectionHeader("Web 插件配置")
 
-                    • Web 插件不需要编写 Java 代码
-                    • UI 界面请编辑 web/index.html、web/style.css、web/script.js
-                    • JavaScript 可通过 UINPlugin.callHost() 调用原生功能
-                    • 修改 HTML/CSS/JS 后无需重新编译
-                    • 可以直接导入已有的 HTML/CSS/JS 项目
-                """.trimIndent(),
-                modifier = Modifier.padding(8.dp)
-            )
+        UIComponents.Card(modifier = Modifier.fillMaxWidth()) {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                Text(
+                    text = "Web 插件说明",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                val hints = listOf(
+                    "Web 插件不需要编写 Java 代码",
+                    "编辑 web/index.html、web/style.css、web/script.js",
+                    "JavaScript 可通过 UINPlugin.callHost() 调用原生功能",
+                    "修改 HTML/CSS/JS 后无需重新编译",
+                    "可直接导入已有的 HTML/CSS/JS 项目"
+                )
+                hints.forEach { hint ->
+                    Row(verticalAlignment = Alignment.Top) {
+                        UIComponents.ConnectorMark(
+                            size = 10.dp,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                        )
+                        Spacer(Modifier.width(Spacing.xs))
+                        Text(
+                            text = hint,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        UIComponents.BodyText("选择模板类型：")
-        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "选择模板类型",
+            style = MaterialTheme.typography.labelLarge
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
         ) {
-            UIComponents.Chip(
-                label = "完整模板",
-                selected = templateType == 0,
-                onClick = { onTemplateTypeChange(0) },
-                modifier = Modifier.weight(1f)
-            )
-            UIComponents.Chip(
-                label = "空白模板",
-                selected = templateType == 1,
-                onClick = { onTemplateTypeChange(1) },
-                modifier = Modifier.weight(1f)
-            )
-            UIComponents.Chip(
-                label = "导入项目",
-                selected = templateType == 2,
-                onClick = { onTemplateTypeChange(2) },
-                modifier = Modifier.weight(1f)
-            )
-            UIComponents.Chip(
-                label = "跳过",
-                selected = templateType == 3,
-                onClick = { onTemplateTypeChange(3) },
-                modifier = Modifier.weight(1f)
-            )
+            listOf("完整模板", "空白模板", "导入项目", "跳过").forEachIndexed { i, label ->
+                UIComponents.Chip(
+                    label = label,
+                    selected = templateType == i,
+                    onClick = { onTemplateTypeChange(i) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
 
         if (templateType == 2) {
-            Spacer(modifier = Modifier.height(8.dp))
             UIComponents.PrimaryButton(
                 text = "选择 ZIP 文件导入",
                 icon = Icons.Default.FileUpload,
@@ -384,17 +406,15 @@ fun ResourcesStep(
         }
     }
 
-    Column {
-        UIComponents.BodyText("添加资源文件（可选）")
-        Spacer(modifier = Modifier.height(8.dp))
-        UIComponents.CaptionText("添加图片、音频等资源文件")
-        Spacer(modifier = Modifier.height(16.dp))
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+        UIComponents.SectionHeader("资源文件")
+        UIComponents.CaptionText("添加图片、音频等资源文件（可选）")
 
         if (resourcePaths.isEmpty()) {
             UIComponents.Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp)
+                    .height(100.dp)
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -404,10 +424,10 @@ fun ResourcesStep(
                         Icon(
                             Icons.Default.Folder,
                             contentDescription = null,
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            modifier = Modifier.size(36.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(Modifier.height(Spacing.xs))
                         UIComponents.CaptionText("暂无资源文件")
                     }
                 }
@@ -415,46 +435,35 @@ fun ResourcesStep(
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(Spacing.xs)
             ) {
                 items(resourcePaths.indices.toList()) { index ->
                     val path = resourcePaths[index]
-                    UIComponents.Card(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
+                    UIComponents.Card(modifier = Modifier.fillMaxWidth()) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
+                            UIComponents.ConnectorMark(
+                                size = 10.dp,
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                            )
+                            Spacer(Modifier.width(Spacing.sm))
+                            Text(
+                                text = File(path).name,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.weight(1f)
-                            ) {
-                                Icon(
-                                    Icons.Default.InsertDriveFile,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                UIComponents.BodyText(File(path).name)
-                            }
+                            )
                             UIComponents.IconButton(
                                 icon = Icons.Default.Close,
                                 onClick = { onResourceRemoved(index) },
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(32.dp)
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                             )
                         }
                     }
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         UIComponents.PrimaryButton(
             text = "添加资源文件",
@@ -474,14 +483,13 @@ fun PackageStep(
     compileProgress: Int,
     tpkFile: File?
 ) {
-    Column {
-        UIComponents.TitleText("生成项目文件")
-        Spacer(modifier = Modifier.height(8.dp))
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+        UIComponents.SectionHeader("生成项目文件")
 
         UIComponents.Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(if (isCompiling) 280.dp else 240.dp)
+                .heightIn(min = 200.dp)
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -489,45 +497,81 @@ fun PackageStep(
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(Spacing.md)
                 ) {
-                    if (isCompiling) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(48.dp),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        UIComponents.LinearProgressIndicator(progress = compileProgress / 100f)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        UIComponents.BodyText(compileMessage)
-                        UIComponents.CaptionText("$compileProgress%")
-                    } else if (tpkFile != null && tpkFile.exists()) {
-                        Icon(
-                            Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        UIComponents.TitleText("✅ 打包成功！")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        UIComponents.CaptionText(tpkFile.absolutePath)
-                        UIComponents.CaptionText("大小: ${formatFileSize(tpkFile.length())}")
-                    } else {
-                        Icon(
-                            Icons.Default.Build,
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        UIComponents.BodyText("点击「完成」按钮开始生成项目文件")
-                        if (compileMessage.isNotEmpty() && !compileMessage.contains("成功")) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            UIComponents.CaptionText(
-                                compileMessage,
-                                color = MaterialTheme.colorScheme.error
+                    when {
+                        isCompiling -> {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(36.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                                strokeWidth = 3.dp
                             )
+                            Spacer(Modifier.height(Spacing.md))
+                            UIComponents.LinearProgressIndicator(progress = compileProgress / 100f)
+                            Spacer(Modifier.height(Spacing.sm))
+                            Text(
+                                text = compileMessage,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "$compileProgress%",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                                ),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        tpkFile != null && tpkFile.exists() -> {
+                            Icon(
+                                Icons.Default.CheckCircle,
+                                contentDescription = null,
+                                modifier = Modifier.size(40.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.height(Spacing.sm))
+                            Text(
+                                text = "打包成功",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Spacer(Modifier.height(Spacing.xs))
+                            Text(
+                                text = tpkFile.absolutePath,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                                    fontSize = 10.sp
+                                ),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "大小: ${formatFileSize(tpkFile.length())}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        else -> {
+                            Icon(
+                                Icons.Default.Build,
+                                contentDescription = null,
+                                modifier = Modifier.size(40.dp),
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                            )
+                            Spacer(Modifier.height(Spacing.sm))
+                            Text(
+                                text = "点击「完成」按钮开始生成项目文件",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            if (compileMessage.isNotEmpty() && !compileMessage.contains("成功")) {
+                                Spacer(Modifier.height(Spacing.xs))
+                                Text(
+                                    text = compileMessage,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
                         }
                     }
                 }

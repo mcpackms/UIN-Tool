@@ -13,22 +13,6 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.UIN.Tool.R
 import com.UIN.Tool.core.di.ServiceLocator
@@ -38,10 +22,7 @@ import com.UIN.Tool.log.Logger
 import com.UIN.Tool.plugin.PluginHostActivity
 import com.UIN.Tool.plugin.PluginManager
 import com.UIN.Tool.ui.log.LogViewerActivity
-import com.UIN.Tool.ui.screen.dev.DevScreen
-import com.UIN.Tool.ui.screen.manage.ManageScreen
-import com.UIN.Tool.ui.screen.repo.RepoScreen
-import com.UIN.Tool.ui.screen.tools.ToolsScreen
+import com.UIN.Tool.ui.screen.main.MainScreen
 import com.UIN.Tool.ui.theme.UINToolTheme
 import com.UIN.Tool.utils.Constants
 import com.UIN.Tool.utils.CrashLogUtils
@@ -129,7 +110,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             UINToolTheme {
-                MainContent(
+                MainScreen(
                     initialTab = selectedTab,
                     checkUpdate = intent.getBooleanExtra(EXTRA_CHECK_UPDATE, false)
                 )
@@ -168,7 +149,7 @@ class MainActivity : ComponentActivity() {
         
         setContent {
             UINToolTheme {
-                MainContent(
+                MainScreen(
                     initialTab = selectedTab,
                     checkUpdate = intent.getBooleanExtra(EXTRA_CHECK_UPDATE, false)
                 )
@@ -473,92 +454,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// ==================== MainContent ====================
-
-@Composable
-fun MainContent(
-    initialTab: Int = 1,
-    checkUpdate: Boolean = false
-) {
-    var selectedTab by remember { mutableStateOf(initialTab) }
-
-    val tabs = listOf(
-        "开发" to R.drawable.ic_developer_mode,
-        "工具" to R.drawable.ic_grid_view,
-        "仓库" to R.drawable.ic_repo,
-        "管理" to R.drawable.ic_settings
-    )
-
-    LaunchedEffect(checkUpdate) {
-        if (checkUpdate) {
-            selectedTab = 3
-        }
-    }
-
-    Scaffold(
-        bottomBar = {
-            // 浮动底部导航栏 - 无边框，无左右下边距
-            NavigationBar(
-                containerColor = Color.Transparent,
-                tonalElevation = 0.dp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(
-                        elevation = 8.dp,
-                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-                        clip = false
-                    )
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color.White.copy(alpha = 0.95f),
-                                Color.White.copy(alpha = 0.85f)
-                            )
-                        ),
-                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-                    )
-                    .height(56.dp)
-            ) {
-                tabs.forEachIndexed { index, (label, icon) ->
-                    val isSelected = selectedTab == index
-                    NavigationBarItem(
-                        selected = isSelected,
-                        onClick = { selectedTab = index },
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = icon),
-                                contentDescription = label,
-                                modifier = Modifier.size(24.dp),
-                                tint = if (isSelected) Color(0xFF1A3A4A) else Color(0xFF9AA6B2)
-                            )
-                        },
-                        label = { 
-                            Text(
-                                label,
-                                color = if (isSelected) Color(0xFF1A3A4A) else Color(0xFF9AA6B2),
-                                fontSize = 10.sp,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                            )
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color(0xFF1A3A4A),
-                            selectedTextColor = Color(0xFF1A3A4A),
-                            unselectedIconColor = Color(0xFF9AA6B2),
-                            unselectedTextColor = Color(0xFF9AA6B2),
-                            indicatorColor = Color.Transparent
-                        )
-                    )
-                }
-            }
-        }
-    ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            when (selectedTab) {
-                0 -> DevScreen()
-                1 -> ToolsScreen()
-                2 -> RepoScreen()
-                3 -> ManageScreen(checkUpdate = checkUpdate)
-            }
-        }
-    }
-}

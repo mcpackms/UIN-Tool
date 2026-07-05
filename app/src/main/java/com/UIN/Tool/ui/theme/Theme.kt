@@ -5,129 +5,106 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// ==================== 自定义主色（蓝灰色系） ====================
-val PrimaryBlue = Color(0xFF1A3A4A)
-val PrimaryDarkBlue = Color(0xFF0F2838)
-val PrimaryLightBlue = Color(0xFF2D5A70)
-val AccentBlue = Color(0xFF4A8A9E)
+// ==================== 新设计系统色板 ====================
+// 暖暗色 + 冷翠绿 —— 开发者工具，但不过分冰冷
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-// ==================== 辅助色 ====================
-val SuccessGreen = Color(0xFF4CAF50)
-val WarningOrange = Color(0xFFFF9800)
-val ErrorRed = Color(0xFFF44336)
-val InfoBlue = Color(0xFF2196F3)
+// —— 基础色 ——
+val WorkbenchGreen = Color(0xFF4AE0C5)    // 主色：翠绿，鲜活的技术感
+val WorkbenchGreenDark = Color(0xFF0D8A7A) // 亮色主色
+val WorkbenchAmber = Color(0xFFF5A623)    // 强调色：琥珀，温暖交互
+val WorkbenchAmberDark = Color(0xFFD4890B)
 
-// ==================== 文本颜色 ====================
-val TextPrimary = Color(0xFF212121)
-val TextSecondary = Color(0xFF757575)
-val TextHint = Color(0xFFBDBDBD)
-val TextDisabled = Color(0xFF9E9E9E)
+// —— 暗色模式 ——
+val DarkBg = Color(0xFF0E1217)            // 暖调深灰背景
+val DarkSurface = Color(0xFF1A1F26)        // 面板色
+val DarkSurfaceElevated = Color(0xFF222830) // 抬升面板
+val DarkBorder = Color(0xFF272C35)         // 细边框
+val DarkTextPrimary = Color(0xFFE8EAED)    // 正文主色
+val DarkTextSecondary = Color(0xFF9AA0AB)  // 辅助文字
+val DarkTextDisabled = Color(0xFF505864)   // 禁用文字
+val DarkGreenDim = Color(0xFF2D8F7E)       // 主色暗化（容器、辉光）
+val DarkAmberDim = Color(0xFF8A6D2B)       // 强调色暗化
 
-// ==================== 背景色 ====================
-val BackgroundGray = Color(0xFFF5F7FA)
-val BackgroundCardWhite = Color(0xFFFFFFFF)
-val BackgroundDarkGray = Color(0xFFE8ECF0)
+// —— 亮色模式 ——
+val LightBg = Color(0xFFF5F5F0)           // 暖白背景
+val LightSurface = Color(0xFFFFFFFF)
+val LightBorder = Color(0xFFE2E4E0)        // 细边框
+val LightTextPrimary = Color(0xFF1A1A1A)
+val LightTextSecondary = Color(0xFF6B7280)
+val LightTextDisabled = Color(0xFFB0B5BC)
+val LightGreenDim = Color(0xFFD1F2EB)      // 主色容器
+val LightAmberDim = Color(0xFFFEF0D5)
 
-// ==================== 表面色 ====================
-val SurfaceWhite = Color(0xFFFFFFFF)
-val SurfaceVariantGray = Color(0xFFF5F7FA)
-val SurfaceCardWhite = Color(0xFFFFFFFF)
+// —— 语义色 ——
+val StatusError = Color(0xFFE5484D)
+val StatusWarning = Color(0xFFF5A623)
+val StatusSuccess = Color(0xFF30A46B)
+val StatusInfo = Color(0xFF3B82F6)
 
-// ==================== 边框和分割线 ====================
-val DividerGray = Color(0xFFE0E4E8)
-val BorderGray = Color(0xFFD0D5DA)
+// ==================== Material 3 配色方案 ====================
 
-// ==================== 深色模式 ====================
-val DarkPrimaryBlue = Color(0xFF4A8A9E)
-val DarkBackground = Color(0xFF121212)
-val DarkSurface = Color(0xFF1E1E1E)
-val DarkTextPrimary = Color(0xFFEEEEEE)
-val DarkTextSecondary = Color(0xFFBDBDBD)
-val DarkSurfaceVariant = Color(0xFF2A2A2A)
-
-// ==================== 卡片相关 ====================
-val CardShadow = Color(0x1A000000)
-val CardRipple = Color(0x0D1A3A4A)
-
-// ==================== 玻璃效果 ====================
-val GlassBackground = Color(0xE6FFFFFF)
-val GlassBorder = Color(0x40FFFFFF)
-val GlassShadow = Color(0x20000000)
-
-// ==================== 叠加色 ====================
-val OverlayLight = Color(0x0D000000)
-val OverlayMedium = Color(0x1A000000)
-val OverlayDark = Color(0x33000000)
-
-// ==================== 灰色调 ====================
-val GrayLight = Color(0xFFF5F7FA)
-val GrayMedium = Color(0xFFEEF1F4)
-val GrayDark = Color(0xFF9AA6B2)
-val GrayText = Color(0xFF616F7E)
-
-// ==================== 导航栏 ====================
-val NavItemSelected = Color(0xFF1A3A4A)
-val NavItemUnselected = Color(0xFFB0BCC8)
-
-// ==================== 渐变 ====================
-val GradientStart = Color(0xFF1A3A4A)
-val GradientEnd = Color(0xFF2D5A70)
-val GradientAccentStart = Color(0xFF4A8A9E)
-val GradientAccentEnd = Color(0xFF6AAEC2)
-
-// ==================== 浅色主题配色方案 ====================
-val LightColorScheme = lightColorScheme(
-    primary = PrimaryBlue,
+private val LightColorScheme = lightColorScheme(
+    primary = WorkbenchGreenDark,
     onPrimary = Color.White,
-    primaryContainer = PrimaryLightBlue,
-    onPrimaryContainer = Color.White,
-    secondary = AccentBlue,
+    primaryContainer = LightGreenDim,
+    onPrimaryContainer = Color(0xFF0B3D33),
+    secondary = WorkbenchAmberDark,
     onSecondary = Color.White,
-    tertiary = InfoBlue,
+    secondaryContainer = LightAmberDim,
+    onSecondaryContainer = Color(0xFF3D2E0A),
+    tertiary = StatusInfo,
     onTertiary = Color.White,
-    background = BackgroundGray,
-    onBackground = TextPrimary,
-    surface = SurfaceWhite,
-    onSurface = TextPrimary,
-    surfaceVariant = SurfaceVariantGray,
-    onSurfaceVariant = TextSecondary,
-    error = ErrorRed,
+    background = LightBg,
+    onBackground = LightTextPrimary,
+    surface = LightSurface,
+    onSurface = LightTextPrimary,
+    surfaceVariant = Color(0xFFEEEFEC),
+    onSurfaceVariant = LightTextSecondary,
+    error = StatusError,
     onError = Color.White,
-    outline = BorderGray,
-    outlineVariant = DividerGray,
-    inverseSurface = PrimaryDarkBlue,
-    inverseOnSurface = Color.White,
-    inversePrimary = PrimaryLightBlue,
-    surfaceTint = PrimaryBlue
+    outline = LightBorder,
+    outlineVariant = Color(0xFFD0D2CE),
+    inverseSurface = DarkBg,
+    inverseOnSurface = DarkTextPrimary,
+    inversePrimary = WorkbenchGreen,
+    surfaceTint = WorkbenchGreenDark,
 )
 
-// ==================== 深色主题配色方案 ====================
-val DarkColorScheme = darkColorScheme(
-    primary = DarkPrimaryBlue,
-    onPrimary = Color.White,
-    primaryContainer = PrimaryLightBlue,
-    onPrimaryContainer = Color.White,
-    secondary = AccentBlue,
-    onSecondary = Color.White,
-    tertiary = InfoBlue,
+private val DarkColorScheme = darkColorScheme(
+    primary = WorkbenchGreen,
+    onPrimary = Color(0xFF00382F),
+    primaryContainer = DarkGreenDim,
+    onPrimaryContainer = Color(0xFFB0F0E0),
+    secondary = WorkbenchAmber,
+    onSecondary = Color(0xFF2D1F00),
+    secondaryContainer = DarkAmberDim,
+    onSecondaryContainer = Color(0xFFFDE2A0),
+    tertiary = StatusInfo,
     onTertiary = Color.White,
-    background = DarkBackground,
+    background = DarkBg,
     onBackground = DarkTextPrimary,
     surface = DarkSurface,
     onSurface = DarkTextPrimary,
-    surfaceVariant = DarkSurfaceVariant,
+    surfaceVariant = DarkSurfaceElevated,
     onSurfaceVariant = DarkTextSecondary,
-    error = ErrorRed,
+    error = StatusError,
     onError = Color.White,
-    outline = Color(0xFF444444),
-    outlineVariant = Color(0xFF333333),
-    inverseSurface = Color(0xFF333333),
-    inverseOnSurface = DarkTextPrimary,
-    inversePrimary = DarkPrimaryBlue,
-    surfaceTint = DarkPrimaryBlue
+    outline = DarkBorder,
+    outlineVariant = Color(0xFF2F3540),
+    inverseSurface = LightSurface,
+    inverseOnSurface = LightTextPrimary,
+    inversePrimary = WorkbenchGreenDark,
+    surfaceTint = WorkbenchGreen,
 )
 
+// ==================== 签名色：连接符 ⟩ 专用色 ====================
+// 在所有界面中保持一致
+val ConnectorColor get() = WorkbenchGreen
+val ConnectorColorAmber get() = WorkbenchAmber
+
 // ==================== 主题函数 ====================
+
 @Composable
 fun UINToolTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -137,8 +114,8 @@ fun UINToolTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
-        shapes = Shapes,
+        typography = WorkbenchTypography,
+        shapes = WorkbenchShapes,
         content = content
     )
 }

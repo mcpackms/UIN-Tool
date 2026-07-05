@@ -1,6 +1,7 @@
-// app/src/main/java/com/UIN/Tool/ui/components/UIComponents.kt
 package com.UIN.Tool.ui.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,16 +10,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -26,51 +26,43 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.UIN.Tool.ui.theme.*
 
-// 原来重构前的颜色定义
-object UITheme {
-    // 主色调 - 蓝灰色系（重构前）
-    val Primary = Color(0xFF1A3A4A)
-    val PrimaryDark = Color(0xFF0F2838)
-    val PrimaryLight = Color(0xFF2D5A70)
-    val Accent = Color(0xFF4A8A9E)
-    
-    // 辅助色
-    val Success = Color(0xFF4CAF50)
-    val Warning = Color(0xFFFF9800)
-    val Error = Color(0xFFF44336)
-    val Info = Color(0xFF2196F3)
-    
-    // 文本颜色
-    val TextPrimary = Color(0xFF212121)
-    val TextSecondary = Color(0xFF757575)
-    val TextHint = Color(0xFFBDBDBD)
-    
-    // 背景色
-    val Background = Color(0xFFF5F7FA)
-    val Surface = Color(0xFFFFFFFF)
-    val SurfaceVariant = Color(0xFFF5F7FA)
-    
-    // 边框和分割线
-    val Divider = Color(0xFFE0E4E8)
-    
-    // 卡片阴影
-    val CardShadow = Color(0x1A000000)
-    
-    // 间距
-    val SpacingSmall = 4.dp
-    val SpacingMedium = 8.dp
-    val SpacingLarge = 16.dp
-    val SpacingXLarge = 24.dp
-    
-    // 圆角
-    val RadiusSmall = 8.dp
-    val RadiusMedium = 12.dp
-    val RadiusLarge = 16.dp
-    val RadiusXLarge = 24.dp
+// ==================== 统一间距常量 ====================
+object Spacing {
+    val xs = 4.dp
+    val sm = 8.dp
+    val md = 12.dp
+    val lg = 16.dp
+    val xl = 24.dp
+    val xxl = 32.dp
 }
 
+// ==================== 统一组件库 ====================
+// 合并 UIComponents + GlassComponents
+// 所有颜色、形状从 MaterialTheme 和主题文件读取
+// 无硬编码色值（除透明度和特殊场景外）
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
 object UIComponents {
+
+    // ======================== 签名元素：连接符 ⟩ ========================
+
+    @Composable
+    fun ConnectorMark(
+        modifier: Modifier = Modifier,
+        color: Color = ConnectorColor,
+        size: Dp = 18.dp
+    ) {
+        Text(
+            text = "⟩",
+            style = ConnectorStyle.copy(
+                fontSize = size.value.sp,
+                color = color
+            ),
+            modifier = modifier
+        )
+    }
 
     // ======================== 按钮 ========================
 
@@ -87,36 +79,29 @@ object UIComponents {
             onClick = onClick,
             enabled = enabled,
             modifier = modifier
-                .height(48.dp)
-                .defaultMinSize(minWidth = 80.dp),
-            shape = RoundedCornerShape(UITheme.RadiusLarge),
+                .height(42.dp)
+                .defaultMinSize(minWidth = 72.dp),
+            shape = ButtonShape,
             colors = ButtonDefaults.buttonColors(
-                containerColor = UITheme.Primary,
-                contentColor = Color.White,
-                disabledContainerColor = UITheme.TextHint,
-                disabledContentColor = Color.White.copy(alpha = 0.5f)
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                disabledContainerColor = MaterialTheme.colorScheme.outlineVariant,
+                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
             ),
-            elevation = ButtonDefaults.buttonElevation(
-                defaultElevation = 2.dp
-            )
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
         ) {
             if (loading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = Color.White,
+                    modifier = Modifier.size(18.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
                     strokeWidth = 2.dp
                 )
             } else {
                 icon?.let {
-                    Icon(it, contentDescription = null, modifier = Modifier.size(20.dp))
-                    Spacer(Modifier.width(UITheme.SpacingSmall))
+                    Icon(it, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(Spacing.xs))
                 }
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontSize = 14.sp
-                    )
-                )
+                Text(text, style = MaterialTheme.typography.labelLarge)
             }
         }
     }
@@ -133,25 +118,25 @@ object UIComponents {
             onClick = onClick,
             enabled = enabled,
             modifier = modifier
-                .height(48.dp)
-                .defaultMinSize(minWidth = 80.dp),
-            shape = RoundedCornerShape(UITheme.RadiusLarge),
+                .height(42.dp)
+                .defaultMinSize(minWidth = 72.dp),
+            shape = ButtonShape,
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = UITheme.Primary,
-                disabledContentColor = UITheme.TextHint
+                contentColor = MaterialTheme.colorScheme.primary,
+                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
             ),
-            border = ButtonDefaults.outlinedButtonBorder(enabled)
+            border = BorderStroke(
+                width = 1.dp,
+                color = if (enabled) MaterialTheme.colorScheme.outline
+                        else MaterialTheme.colorScheme.outlineVariant
+            ),
+            elevation = ButtonDefaults.outlinedButtonElevation(defaultElevation = 0.dp)
         ) {
             icon?.let {
-                Icon(it, contentDescription = null, modifier = Modifier.size(20.dp))
-                Spacer(Modifier.width(UITheme.SpacingSmall))
+                Icon(it, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(Spacing.xs))
             }
-            Text(
-                text = text,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontSize = 14.sp
-                )
-            )
+            Text(text, style = MaterialTheme.typography.labelLarge)
         }
     }
 
@@ -160,22 +145,43 @@ object UIComponents {
         text: String,
         onClick: () -> Unit,
         modifier: Modifier = Modifier,
-        enabled: Boolean = true,
-        textStyle: TextStyle = MaterialTheme.typography.titleMedium
+        enabled: Boolean = true
     ) {
         androidx.compose.material3.TextButton(
             onClick = onClick,
             enabled = enabled,
-            modifier = modifier,
+            modifier = modifier.height(42.dp),
             colors = ButtonDefaults.textButtonColors(
-                contentColor = UITheme.Primary,
-                disabledContentColor = UITheme.TextHint
+                contentColor = MaterialTheme.colorScheme.primary,
+                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
         ) {
-            Text(
-                text = text,
-                style = textStyle.copy(fontSize = 14.sp)
+            Text(text, style = MaterialTheme.typography.labelLarge)
+        }
+    }
+
+    @Composable
+    fun GhostButton(
+        text: String,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier,
+        enabled: Boolean = true,
+        icon: ImageVector? = null
+    ) {
+        TextButton(
+            onClick = onClick,
+            enabled = enabled,
+            modifier = modifier.height(42.dp),
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = MaterialTheme.colorScheme.primary,
+                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
+        ) {
+            icon?.let {
+                Icon(it, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(Spacing.xs))
+            }
+            Text(text, style = MaterialTheme.typography.labelLarge)
         }
     }
 
@@ -189,76 +195,96 @@ object UIComponents {
     ) {
         androidx.compose.material3.IconButton(
             onClick = onClick,
-            modifier = modifier
+            modifier = modifier.size(40.dp)
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = contentDescription,
-                tint = tint ?: UITheme.TextPrimary,
-                modifier = Modifier.size(24.dp)
+                tint = tint ?: MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp)
             )
         }
     }
 
     // ======================== 卡片 ========================
+    // 用细边框替代投影——更干净、更技术
+    // 所有卡片无阴影，有边框
 
     @Composable
     fun Card(
         modifier: Modifier = Modifier,
         onClick: (() -> Unit)? = null,
+        @Suppress("UNUSED_PARAMETER")
         elevation: Dp? = null,
         shape: Shape? = null,
         content: @Composable ColumnScope.() -> Unit
     ) {
-        val finalElevation = elevation ?: 4.dp
-        val finalShape = shape ?: RoundedCornerShape(UITheme.RadiusLarge)
-        val cardModifier = modifier
-            .shadow(finalElevation, finalShape)
-            .clip(finalShape)
-            .background(UITheme.Surface)
+        val finalShape = shape ?: CardShape
+        val surfaceColor = MaterialTheme.colorScheme.surface
+        val borderColor = MaterialTheme.colorScheme.outline
 
-        val clickableModifier = if (onClick != null) {
-            cardModifier.clickable(
+        val baseMod = modifier
+            .clip(finalShape)
+            .background(surfaceColor, finalShape)
+
+        val clickMod = if (onClick != null) {
+            baseMod.clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = onClick
             )
-        } else cardModifier
+        } else baseMod
 
         Surface(
-            modifier = clickableModifier,
-            color = UITheme.Surface,
+            modifier = clickMod,
+            color = surfaceColor,
             shape = finalShape,
+            border = BorderStroke(0.5.dp, borderColor),
             shadowElevation = 0.dp
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(UITheme.SpacingLarge),
+                    .padding(Spacing.md),
                 content = content
             )
         }
     }
 
+    // 保留 GlassCard 名称但改造成透明/线框风格的卡片变体
     @Composable
     fun GlassCard(
         modifier: Modifier = Modifier,
+        onClick: (() -> Unit)? = null,
         content: @Composable ColumnScope.() -> Unit
     ) {
-        val shape = RoundedCornerShape(UITheme.RadiusLarge)
+        val shape = CardShape
+        val bg = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+        val borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+
+        val baseMod = modifier
+            .clip(shape)
+            .background(bg, shape)
+
+        val clickMod = if (onClick != null) {
+            baseMod.clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick
+            )
+        } else baseMod
+
         Surface(
-            modifier = modifier
-                .shadow(4.dp, shape)
-                .clip(shape)
-                .background(Color.White.copy(alpha = 0.85f)),
-            color = Color.White.copy(alpha = 0.85f),
+            modifier = clickMod,
+            color = bg,
             shape = shape,
+            border = BorderStroke(0.5.dp, borderColor),
             shadowElevation = 0.dp
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(UITheme.SpacingLarge),
+                    .padding(Spacing.md),
                 content = content
             )
         }
@@ -284,22 +310,22 @@ object UIComponents {
             value = value,
             onValueChange = onValueChange,
             modifier = modifier,
-            label = label?.let { { Text(it, fontSize = 14.sp) } },
-            placeholder = placeholder?.let { { Text(it, fontSize = 14.sp) } },
-            leadingIcon = leadingIcon?.let { { Icon(it, null) } },
-            trailingIcon = trailingIcon?.let { { Icon(it, null) } },
+            label = label?.let { { Text(it) } },
+            placeholder = placeholder?.let { { Text(it) } },
+            leadingIcon = leadingIcon?.let { { Icon(it, null, modifier = Modifier.size(20.dp)) } },
+            trailingIcon = trailingIcon?.let { { Icon(it, null, modifier = Modifier.size(20.dp)) } },
             singleLine = singleLine,
             isError = isError,
-            supportingText = supportingText?.let { { Text(it, fontSize = 12.sp) } },
+            supportingText = supportingText?.let { { Text(it) } },
             enabled = enabled,
-            shape = RoundedCornerShape(UITheme.RadiusMedium),
+            shape = InputShape,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = UITheme.Primary,
-                unfocusedBorderColor = UITheme.Divider,
-                focusedLabelColor = UITheme.Primary,
-                cursorColor = UITheme.Primary
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                cursorColor = MaterialTheme.colorScheme.primary,
             ),
-            textStyle = LocalTextStyle.current.copy(fontSize = 14.sp)
+            textStyle = MaterialTheme.typography.bodyMedium,
         )
     }
 
@@ -316,24 +342,36 @@ object UIComponents {
     ) {
         AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text(title, style = MaterialTheme.typography.titleLarge.copy(fontSize = 18.sp)) },
-            text = { Text(message, style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp)) },
+            title = {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+            },
+            text = {
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
             confirmButton = {
-                PrimaryButton(
-                    text = confirmText,
-                    onClick = onConfirm,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        text = dismissText,
+                        onClick = onDismiss
+                    )
+                    Spacer(Modifier.width(Spacing.sm))
+                    PrimaryButton(
+                        text = confirmText,
+                        onClick = onConfirm
+                    )
+                }
             },
-            dismissButton = {
-                TextButton(
-                    text = dismissText,
-                    onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            containerColor = UITheme.Surface,
-            shape = RoundedCornerShape(UITheme.RadiusXLarge)
+            containerColor = MaterialTheme.colorScheme.surface,
+            shape = DialogShape,
         )
     }
 
@@ -350,25 +388,32 @@ object UIComponents {
             )
         ) {
             Surface(
-                shape = RoundedCornerShape(UITheme.RadiusXLarge),
-                color = UITheme.Surface,
-                shadowElevation = 4.dp
+                shape = DialogShape,
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline),
+                shadowElevation = 0.dp
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(UITheme.SpacingXLarge),
+                        .padding(Spacing.xl),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    CircularProgressIndicator(color = UITheme.Primary)
-                    Spacer(Modifier.height(UITheme.SpacingMedium))
-                    Text(message, style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp))
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                    Spacer(Modifier.height(Spacing.md))
+                    Text(
+                        text = message,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
                     if (onCancel != null) {
-                        Spacer(Modifier.height(UITheme.SpacingMedium))
-                        TextButton(
+                        Spacer(Modifier.height(Spacing.md))
+                        GhostButton(
                             text = "取消",
-                            onClick = onCancel,
-                            modifier = Modifier.fillMaxWidth()
+                            onClick = onCancel
                         )
                     }
                 }
@@ -388,33 +433,28 @@ object UIComponents {
         modifier: Modifier = Modifier
     ) {
         Card(
-            modifier = modifier.clickable(onClick = onClick),
-            onClick = null
+            modifier = modifier,
+            onClick = onClick
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(UITheme.SpacingLarge),
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 leadingContent?.invoke()
-                if (leadingContent != null) Spacer(Modifier.width(UITheme.SpacingMedium))
+                if (leadingContent != null) Spacer(Modifier.width(Spacing.sm))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = UITheme.TextPrimary
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     subtitle?.let {
                         Text(
                             text = it,
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                fontSize = 13.sp
-                            ),
-                            color = UITheme.TextSecondary
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -432,9 +472,17 @@ object UIComponents {
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                CircularProgressIndicator(color = UITheme.Primary)
-                Spacer(Modifier.height(UITheme.SpacingMedium))
-                Text(message, style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp))
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp
+                )
+                Spacer(Modifier.height(Spacing.md))
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
@@ -443,12 +491,12 @@ object UIComponents {
     fun LinearProgressIndicator(progress: Float) {
         androidx.compose.material3.LinearProgressIndicator(
             progress = { progress.coerceIn(0f, 1f) },
-            color = UITheme.Primary,
-            trackColor = UITheme.Divider,
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.outlineVariant,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
+                .height(3.dp)
+                .clip(RoundedCornerShape(1.5.dp))
         )
     }
 
@@ -463,11 +511,8 @@ object UIComponents {
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            ),
-            color = color ?: UITheme.Primary,
+            style = MaterialTheme.typography.headlineMedium,
+            color = color ?: MaterialTheme.colorScheme.onBackground,
             modifier = modifier,
             textAlign = textAlign
         )
@@ -482,10 +527,8 @@ object UIComponents {
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyMedium.copy(
-                fontSize = 14.sp
-            ),
-            color = color ?: UITheme.TextSecondary,
+            style = MaterialTheme.typography.bodyMedium,
+            color = color ?: MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = modifier,
             textAlign = textAlign
         )
@@ -500,10 +543,8 @@ object UIComponents {
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontSize = 12.sp
-            ),
-            color = color ?: UITheme.TextHint,
+            style = MaterialTheme.typography.labelSmall,
+            color = color ?: MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
             modifier = modifier,
             textAlign = textAlign
         )
@@ -517,12 +558,26 @@ object UIComponents {
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = color ?: MaterialTheme.colorScheme.onBackground,
+            modifier = modifier.padding(vertical = Spacing.xs)
+        )
+    }
+
+    @Composable
+    fun CodeText(
+        text: String,
+        modifier: Modifier = Modifier,
+        color: Color? = null
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontFamily = FontFamily.Monospace
             ),
-            color = color ?: UITheme.TextPrimary,
-            modifier = modifier.padding(vertical = UITheme.SpacingSmall)
+            color = color ?: MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = modifier
         )
     }
 
@@ -541,15 +596,15 @@ object UIComponents {
             modifier = modifier,
             enabled = enabled,
             colors = SwitchDefaults.colors(
-                checkedThumbColor = UITheme.Primary,
-                checkedTrackColor = UITheme.PrimaryLight,
-                uncheckedThumbColor = UITheme.TextHint,
-                uncheckedTrackColor = UITheme.Divider
+                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
+                uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                uncheckedTrackColor = MaterialTheme.colorScheme.outlineVariant
             )
         )
     }
 
-    // ======================== 标签（Chip）- 白色背景 ========================
+    // ======================== 标签/Chip ========================
 
     @Composable
     fun Chip(
@@ -560,27 +615,33 @@ object UIComponents {
         enabled: Boolean = true,
         leadingIcon: @Composable (() -> Unit)? = null
     ) {
+        val bg by animateColorAsState(
+            targetValue = if (selected) MaterialTheme.colorScheme.primary
+                          else MaterialTheme.colorScheme.surface,
+            label = "chip_bg"
+        )
+        val fg by animateColorAsState(
+            targetValue = if (selected) MaterialTheme.colorScheme.onPrimary
+                          else MaterialTheme.colorScheme.onSurface,
+            label = "chip_fg"
+        )
+
         AssistChip(
             onClick = onClick,
-            label = { 
-                Text(
-                    text = label,
-                    fontSize = 13.sp
-                ) 
-            },
+            label = { Text(text = label, style = MaterialTheme.typography.labelMedium) },
             modifier = modifier,
             enabled = enabled,
             leadingIcon = leadingIcon,
             colors = AssistChipDefaults.assistChipColors(
-                containerColor = if (selected) UITheme.Primary else UITheme.Surface,  // 白色背景
-                labelColor = if (selected) Color.White else UITheme.TextPrimary,
-                leadingIconContentColor = if (selected) Color.White else UITheme.TextPrimary
+                containerColor = bg,
+                labelColor = fg,
+                leadingIconContentColor = fg
             ),
-            border = if (selected) null else AssistChipDefaults.assistChipBorder(
-                borderColor = UITheme.Divider,
+            border = if (!selected) AssistChipDefaults.assistChipBorder(
+                borderColor = MaterialTheme.colorScheme.outline,
                 enabled = enabled
-            ),
-            shape = RoundedCornerShape(UITheme.RadiusLarge)
+            ) else null,
+            shape = ChipShape
         )
     }
 
@@ -596,28 +657,95 @@ object UIComponents {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(32.dp),
+                .padding(Spacing.xxl),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Icon(
                 icon,
                 contentDescription = null,
-                modifier = Modifier.size(64.dp),
-                tint = UITheme.TextHint
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            TitleText(
+            Spacer(modifier = Modifier.height(Spacing.md))
+            Text(
                 text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
             if (!description.isNullOrEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                BodyText(
+                Spacer(modifier = Modifier.height(Spacing.xs))
+                Text(
                     text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                     textAlign = TextAlign.Center
                 )
             }
+        }
+    }
+
+    // ======================== 分割线 ========================
+
+    @Composable
+    fun Divider(
+        modifier: Modifier = Modifier
+    ) {
+        HorizontalDivider(
+            modifier = modifier,
+            thickness = 0.5.dp,
+            color = MaterialTheme.colorScheme.outline
+        )
+    }
+
+    // ======================== 小节头部（带连接符） ========================
+
+    @Composable
+    fun SectionHeader(
+        title: String,
+        modifier: Modifier = Modifier
+    ) {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ConnectorMark(size = 16.dp)
+            Spacer(Modifier.width(Spacing.sm))
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    }
+
+    // ======================== 插件首字母头像 ========================
+
+    @Composable
+    fun PluginAvatar(
+        name: String,
+        modifier: Modifier = Modifier,
+        size: Dp = 44.dp
+    ) {
+        Box(
+            modifier = modifier
+                .size(size)
+                .background(
+                    MaterialTheme.colorScheme.primaryContainer,
+                    CardShape
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = name.take(1).uppercase(),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontFamily = FontFamily.SansSerif,
+                    fontWeight = FontWeight.Bold
+                ),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
         }
     }
 }
