@@ -116,14 +116,14 @@ fun CodeEditorScreen(
     }
 
     fun getFileIcon(fileName: String): String = when {
-        fileName.endsWith(".java") -> "⟩"  // 用连接符替代 emoji
-        fileName.endsWith(".kt") || fileName.endsWith(".kts") -> "⟩"
-        fileName.endsWith(".xml") -> "⟩"
-        fileName.endsWith(".html") -> "⟩"
-        fileName.endsWith(".css") -> "⟩"
-        fileName.endsWith(".js") -> "⟩"
-        fileName.endsWith(".json") -> "⟩"
-        else -> "⟩"
+        fileName.endsWith(".java") -> "J"
+        fileName.endsWith(".kt") || fileName.endsWith(".kts") -> "K"
+        fileName.endsWith(".xml") -> "X"
+        fileName.endsWith(".html") -> "H"
+        fileName.endsWith(".css") -> "C"
+        fileName.endsWith(".js") -> "JS"
+        fileName.endsWith(".json") -> "{"
+        else -> "F"
     }
 
     var isDragging by remember { mutableStateOf(false) }
@@ -512,9 +512,9 @@ private fun CodeFileItem(
             .padding(horizontal = Spacing.md, vertical = Spacing.sm),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // ⟩ 连接符作为文件标记
+        // 文件标记
         Text(
-            text = "⟩",
+            text = "▶",
             style = MaterialTheme.typography.labelSmall.copy(
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Light,

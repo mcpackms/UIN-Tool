@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.UIN.Tool.ui.components.Spacing
 import com.UIN.Tool.ui.components.UIComponents
-import com.UIN.Tool.ui.theme.ConnectorColor
+
 import com.UIN.Tool.utils.Constants
 import kotlinx.coroutines.delay
 import androidx.compose.material3.MaterialTheme
@@ -53,11 +53,11 @@ fun SplashScreen(
         ) {
             // 连接符动画（签名）
             Text(
-                text = "⟩",
+                text = "●",
                 style = MaterialTheme.typography.displayLarge.copy(
                     fontWeight = FontWeight.Light,
                     fontSize = 48.sp,
-                    color = ConnectorColor
+                    color = MaterialTheme.colorScheme.primary
                 ),
                 modifier = Modifier.alpha(pulseAlpha)
             )

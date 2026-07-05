@@ -189,7 +189,7 @@ fun GitHubMirrorScreen(navController: NavController) {
                 ) {
                     Column {
                         Text(
-                            text = "⟩ CDN 加速",
+                            text = "CDN 加速",
                             style = MaterialTheme.typography.titleSmall.copy(
                                 fontWeight = FontWeight.SemiBold
                             ),
@@ -431,7 +431,7 @@ fun GitHubMirrorScreen(navController: NavController) {
 
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
-            title = { Text("⟩ 添加镜像站") },
+            title = { Text("添加镜像站") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     UIComponents.TextInput(

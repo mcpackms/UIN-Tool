@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.UIN.Tool.ui.components.Spacing
 import com.UIN.Tool.ui.components.UIComponents
-import com.UIN.Tool.ui.theme.ConnectorColor
 import com.UIN.Tool.ui.theme.WorkbenchGreen
 import kotlinx.coroutines.launch
 
@@ -139,10 +138,10 @@ fun OnboardingScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "⟩",
+                        text = "·",
                         style = MaterialTheme.typography.displaySmall.copy(
                             fontWeight = FontWeight.Light,
-                            color = ConnectorColor
+                            color = MaterialTheme.colorScheme.primary
                         )
                     )
                     Spacer(Modifier.width(Spacing.sm))
@@ -194,7 +193,7 @@ fun OnboardingScreen(
             ) {
                 repeat(items.size) { index ->
                     Text(
-                        text = if (index == pagerState.currentPage) "⟩" else "·",
+                        text = if (index == pagerState.currentPage) "●" else "·",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = if (index == pagerState.currentPage) FontWeight.Medium
                                           else FontWeight.Normal,

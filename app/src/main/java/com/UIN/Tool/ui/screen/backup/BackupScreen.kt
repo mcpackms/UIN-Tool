@@ -447,7 +447,7 @@ fun BackupScreen() {
         UIComponents.Card(modifier = Modifier.fillMaxWidth()) {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                 Text(
-                    text = "⟩ 备份选项",
+                    text = "备份选项",
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.SemiBold
                     ),

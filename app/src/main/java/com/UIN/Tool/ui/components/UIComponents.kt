@@ -46,7 +46,7 @@ object Spacing {
 
 object UIComponents {
 
-    // ======================== 签名元素：连接符 ⟩ ========================
+    // ======================== Connector Mark (deprecated) ========================
 
     @Composable
     fun ConnectorMark(
@@ -54,14 +54,7 @@ object UIComponents {
         color: Color = ConnectorColor,
         size: Dp = 18.dp
     ) {
-        Text(
-            text = "⟩",
-            style = ConnectorStyle.copy(
-                fontSize = size.value.sp,
-                color = color
-            ),
-            modifier = modifier
-        )
+        // No-op: connector mark removed per design change
     }
 
     // ======================== 按钮 ========================

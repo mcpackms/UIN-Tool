@@ -24,7 +24,7 @@ import com.UIN.Tool.ui.screen.dev.DevScreen
 import com.UIN.Tool.ui.screen.manage.ManageScreen
 import com.UIN.Tool.ui.screen.repo.RepoScreen
 import com.UIN.Tool.ui.screen.tools.ToolsScreen
-import com.UIN.Tool.ui.theme.ConnectorColor
+
 
 private data class NavTab(
     val label: String,
@@ -117,7 +117,7 @@ private fun WorkbenchNavBar(
                     // 选中时显示 ⟩ 标记
                     if (isSelected) {
                         Text(
-                            text = "⟩",
+                            text = "·",
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Light,
                                 fontSize = 14.sp,
